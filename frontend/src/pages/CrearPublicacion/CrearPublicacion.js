@@ -1,51 +1,130 @@
-import React from "react";
+import React, { useState } from "react";
 import Navegacion from "../../components/Navegacion/Navegacion";
 import "./CrearPublicacion.css";
 import { useNavigate } from "react-router-dom";
 
-const CrearPublicacion = () => {
-    const navigate = useNavigate();
+// ui material
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Unstable_Grid2";
 
-    const navegar = (irA) => {
-        navigate(irA)
-    }
+const CrearPublicacion = () => {
+  const navigate = useNavigate();
+  const [imagen, setImagen] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [showError, setShowError] = useState(false);
+  const ip = "localhost:5000";
+
+  async function convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const base64Image = event.target.result;
+        resolve(base64Image);
+      };
+
+      reader.onerror = (error) => {
+        reject(error);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
+  const mostrarError = (event) => {
+    return (
+      <div className="alert alert-dismissible alert-danger">
+        <strong>Oh no!</strong> Parece ser que no se ha podido crear la publicación. Intente luego.
+      </div>
+    );
+  };
+
+  const crearPublicacion = async () => {
+    let base64Image = await convertToBase64(imagen);
+    base64Image = base64Image.split(",")[1];
+    const url = `${ip}/crear-publicacion`;
+    let data = {
+      imagen: base64Image,
+      descripcion: descripcion,
+      id_usuario: localStorage.getItem("id_usuario"),
+    };
+    console.log("data: ", data);
+    const fetchData = async () => {
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .catch((error) => console.error("Error:", error))
+        .then((res) => {
+          console.log("res: ", res);
+          const inicioExitoso = res.ok; // true o false
+          if (inicioExitoso) {
+            navigate("/inicio");
+          } else {
+            setShowError(true);
+          }
+        });
+    };
+    fetchData();
+  };
 
   return (
     <main>
       <Navegacion />
       <div className="contenido album py-5">
-            <h3>Bienvenido admin, ¿qué deseas hacer hoy?</h3>
-        <div className="container d-flex justify-content-center align-items-center h-100">
-          <div className="row">
-            <div className="col-sm text-center">
-              <button
-                type="button"
-                className="btn btn-primary btn-lg btn-super"
-                onClick={() => navegar("/artista")}
-                // Agrega una clase personalizada "btn-super" para hacer los botones más grandes
-              >
-                Administrar Artistas
-              </button>
-            </div>
-            <div className="col-sm text-center">
-              <button
-                type="button"
-                className="btn btn-warning btn-lg btn-super"
-                onClick={() => navegar("/album")}
-              >
-                Administrar Albums
-              </button>
-            </div>
-            <div className="col-sm text-center">
-              <button
-                type="button"
-                className="btn btn-success btn-lg btn-super"
-                onClick={() => navegar("/cancion")}
-              >
-                Administrar Canciones
-              </button>
-            </div>
-          </div>
+        {showError && mostrarError()}
+        <div class="container">
+          <h1>Crear Publicación</h1>
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid container spacing={2} justifyContent="center">
+              <Grid xs={4}>
+                <div class="form-group">
+                  <label for="formFile" class="form-label mt-4">
+                    Imagen
+                  </label>
+                  <input
+                    class="form-control"
+                    type="file"
+                    id="formFile"
+                    required={true}
+                    onChange={(event) => setImagen(event.target.files[0])}
+                  />
+                </div>
+              </Grid>
+              <Grid xs={8}>
+                <div class="form-group">
+                  <label for="exampleTextarea" class="form-label mt-4">
+                    Descripción
+                  </label>
+                  <textarea
+                    type="text"
+                    class="form-control"
+                    id="exampleTextarea"
+                    rows="10"
+                    onChange={(event) => setDescripcion(event.target.value)}
+                  ></textarea>
+                </div>
+              </Grid>
+              <Grid>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  onClick={crearPublicacion}
+                >
+                  ¡Compartir Publicación!
+                </button>
+              </Grid>
+            </Grid>
+          </Box>
         </div>
       </div>
     </main>
