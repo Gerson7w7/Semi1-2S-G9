@@ -61,14 +61,19 @@ function Perfil() {
     setModoEdicion(true);
   };
 
+  const cancelarEdicion = () => {
+    setModoEdicion(false);
+    setShowError(false);
+  };
+
   const editarPerfil = async () => {
     const url = `${ip}/editar-perfil`;
     let base64Image = "";
     if (fotoPerfilNuevo !== "") {
-      base64Image = await convertToBase64(fotoPerfilNuevo);
-      base64Image = base64Image.split(",")[1];
+      base64Image = fotoPerfilNuevo.split(",")[1];
     }
     let data = {
+      id_usuario: localStorage.getItem("id_usuario"),
       imagen: base64Image,
       nombre: nombreNuevo,
       dpi: dpiNuevo,
@@ -89,6 +94,7 @@ function Perfil() {
         console.log("res: ", res);
         if (res.passwordCorrecta) {
           setModoEdicion(false);
+          setShowError(false);
           window.location.reload();
         } else {
           setShowError(true);
@@ -105,9 +111,9 @@ function Perfil() {
     );
   };
 
-  const imagenMomentanea = (event) => {
+  const imagenMomentanea = async (event) => {
     const imagen = event.target.files[0];
-    const base64Image = convertToBase64(imagen);
+    const base64Image = await convertToBase64(imagen);
     setFotoPerfilNuevo(base64Image);
   };
 
@@ -127,15 +133,15 @@ function Perfil() {
                   alt="Foto de Perfil"
                 />
                 <label htmlFor="fileInput" className="custom-file-upload">
-                <span className="add-button-perfil">+</span>
-                <input
-                  type="file"
-                  id="fileInput"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={(event) => imagenMomentanea(event)}
-                />
-              </label>
+                  <span className="add-button-perfil">+</span>
+                  <input
+                    type="file"
+                    id="fileInput"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={(event) => imagenMomentanea(event)}
+                  />
+                </label>
               </div>
               <div className="form-fields">
                 <div class="form-group">
@@ -187,6 +193,9 @@ function Perfil() {
                 </div>
                 <button className="button" onClick={editarPerfil}>
                   Guardar Datos
+                </button>
+                <button className="button" onClick={cancelarEdicion}>
+                  Cancelar
                 </button>
               </div>
             </div>
