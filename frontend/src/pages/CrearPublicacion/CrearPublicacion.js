@@ -12,7 +12,7 @@ const CrearPublicacion = () => {
   const [imagen, setImagen] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [showError, setShowError] = useState(false);
-  const ip = "localhost:5000";
+  const ip = "http://localhost:5000";
 
   async function convertToBase64(file) {
     return new Promise((resolve, reject) => {

@@ -1,23 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navegacion from "../../components/Navegacion/Navegacion";
 import "./FiltrarPublicacion.css";
 import { useState } from "react";
 import { Box, Grid } from "@mui/material";
+import Publicacion from "../../components/Publicacion/Publicacion";
 
 const FiltrarPublicacion = () => {
   const [etiquetas, setEtiquetas] = useState(["Todos"]);
-  const [selecEtiqueta, setSelectEtiqueta] = useState("");
+  const [publicaciones, setPublicaciones] = useState([]);
+  const [selecEtiqueta, setSelectEtiqueta] = useState("Todos");
   const [buscarEtiqueta, setBuscarEtiqueta] = useState("");
-  const ip = "http://balancer-semi1-p1-830674914.us-east-1.elb.amazonaws.com/";
+  const ip = "http://localhost:5000";
 
-  const buscarFn = () => {
-    const url = `${ip}/buscar`;
+  useEffect(() => {
+    const url = `${ip}/get-etiquetas`;
+    let data = { id_usuario: localStorage.getItem("id_usuario") };
+    console.log("data: ", data);
+
     const fetchData = async () => {
-      let data = {
-        // buscar: buscar,
-        id_usuario: localStorage.getItem("id_usuario"),
-      };
-      console.log("datos enviados:", data);
       fetch(url, {
         method: "POST",
         body: JSON.stringify(data),
@@ -28,16 +28,39 @@ const FiltrarPublicacion = () => {
         .then((res) => res.json())
         .catch((error) => console.error("Error:", error))
         .then((res) => {
-          console.log("respuesta: ", res);
+          console.log("res: ", res);
+          setEtiquetas(res.etiquetas);
+          setPublicaciones(res.publicaciones);
+        });
+    };
+    fetchData();
+  }, []);
+
+  const filtrarPublicaciones = () => {
+    const url = `${ip}/filtrar-publicaciones`;
+    let data = {
+      etiqueta: buscarEtiqueta === '' ? selecEtiqueta : buscarEtiqueta,
+      id_usuario: localStorage.getItem("id_usuario"),
+    };
+    console.log("data: ", data);
+    const fetchData = async () => {
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .catch((error) => console.error("Error:", error))
+        .then((res) => {
+          console.log("res: ", res);
+          setEtiquetas(res.etiquetas);
+          setPublicaciones(res.publicaciones);
         });
     };
     fetchData();
   };
-
-  const filtrarPublicaciones = () => {
-    console.log("selec: ", selecEtiqueta);
-    console.log("buscar: ", buscarEtiqueta);
-  }
 
   return (
     <main>
@@ -97,6 +120,16 @@ const FiltrarPublicacion = () => {
             </Grid>
           </Box>
         </div>
+        {publicaciones.map((p) => (
+          <Publicacion
+            usuario={p.usuario}
+            fecha={p.fecha}
+            imagen={p.imagen}
+            descripcion={p.descripcion}
+            comentarios={p.comentarios}
+          />
+        ))}
+        {/* <Publicacion /> */}
       </div>
     </main>
   );
