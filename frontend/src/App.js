@@ -9,6 +9,7 @@ import Login from "./pages/Login/Login";
 import CrearPublicacion from "./pages/CrearPublicacion/CrearPublicacion";
 import FiltrarPublicacion from "./pages/FiltrarPublicacion/FiltrarPublicacion";
 import Perfil from "./pages/Perfil/Perfil";
+import ChatAmigos from "./pages/ChatAmigos/ChatAmigos";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/crear-publicacion" element={<CrearPublicacion />} />
           <Route path="/filtrar-publicaciones" element={<FiltrarPublicacion />} />
           <Route path="/perfil" element={<Perfil />} />
+          <Route path="/chat-friends" element={<ChatAmigos />} />
         </Routes>
       </Router>
   );
