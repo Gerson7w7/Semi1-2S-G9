@@ -5,8 +5,8 @@ import Chat from "../../components/Chat/Chat";
 
 const ChatAmigos = () => {
   const [amigos, setAmigos] = useState([]);
-  const [user1, setUser1] = useState({id: "", nombre: ""});
-  const [user2, setUser2] = useState({id: "", nombre: ""});
+  const [user1, setUser1] = useState({ id: "", nombre: "" });
+  const [user2, setUser2] = useState({ id: "", nombre: "" });
   const [showChat, setShowChat] = useState(false);
 
   const ip = "http://localhost:5000";
@@ -30,36 +30,15 @@ const ChatAmigos = () => {
         .then((res) => {
           console.log("res: ", res);
           setAmigos(res.amigos);
-          setUser1({id: user, nombre: res.nombre});
+          setUser1({ id: user, nombre: res.nombre });
         });
     };
     fetchData();
   }, []);
 
-  const chatear = async (id_usuario2, nombre2) => {
-    const url = `${ip}/chatear`;
-    let data = {
-      id_usuario1: localStorage.getItem("id_usuario"),
-      id_usuario2: id_usuario2,
-    };
-    console.log("data: ", data);
-    const fetchData = async () => {
-      fetch(url, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .catch((error) => console.error("Error:", error))
-        .then((res) => {
-          console.log("res: ", res);
-          setUser2({id: id_usuario2, nombre: nombre2});
-          setShowChat(true);
-        });
-    };
-    await fetchData();
+  const chatear = (id_usuario2, nombre2) => {
+    setUser2({ id: id_usuario2, nombre: nombre2 });
+    setShowChat(true);
   };
 
   return (

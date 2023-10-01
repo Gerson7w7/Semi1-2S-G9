@@ -30,6 +30,11 @@ const Chat = (props) => {
     // Unirse a la sala correspondiente al chat entre user1 y user2
     socket.emit("joinRoom", { user1Id: user1.id, user2Id: user2.id });
 
+    // Obtener el historial de la conversación desde el servidor
+    socket.on("chatHistory", (history) => {
+      setChat(history);
+    });
+
     // Escuchar el evento 'message' del servidor
     socket.on("message", (message) => {
       setChat((prevChat) => [...prevChat, message]);
@@ -46,7 +51,7 @@ const Chat = (props) => {
     let data = {
       id_usuario1: user1.id,
       id_usuario2: user2.id,
-      mensaje: newMessage
+      text: newMessage,
     };
     console.log("data: ", data);
     socket.emit("message", data);
