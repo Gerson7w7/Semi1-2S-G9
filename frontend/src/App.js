@@ -10,6 +10,7 @@ import CrearPublicacion from "./pages/CrearPublicacion/CrearPublicacion";
 import FiltrarPublicacion from "./pages/FiltrarPublicacion/FiltrarPublicacion";
 import Perfil from "./pages/Perfil/Perfil";
 import ChatAmigos from "./pages/ChatAmigos/ChatAmigos";
+import Registro from "./pages/Registro/Registro"
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/registro" element={<Registro />} />
           <Route path="/crear-publicacion" element={<CrearPublicacion />} />
           <Route path="/filtrar-publicaciones" element={<FiltrarPublicacion />} />
           <Route path="/perfil" element={<Perfil />} />
