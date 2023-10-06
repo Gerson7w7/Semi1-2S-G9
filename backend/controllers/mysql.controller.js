@@ -1,4 +1,21 @@
-const conn = require('../database/db.js');
+const conn = require('../database/conexion.js');
+
+//============================================= USUARIOS ==============================================
+function getIdUsuario(correo) {
+    return new Promise((resolve, reject) => {
+        conn.query('SELECT id_usuario FROM Usuarios WHERE correo = ?', correo, ((err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                if (result.length > 0) {
+                    resolve({ status: true, id_usuario: result[0].id_usuario });
+                } else {
+                    resolve({ status: false });
+                }
+            }
+        }));
+    });
+}
 
 //=========================================== PUBLICACIONES ===========================================
 function createPublicacion(descripcion, id_usuario) {
@@ -14,4 +31,7 @@ function createPublicacion(descripcion, id_usuario) {
     });
 }
 
-module.exports = { createPublicacion };
+module.exports = { 
+    getIdUsuario,
+    createPublicacion
+};

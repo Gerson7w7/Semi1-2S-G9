@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const sha256 = require('js-sha256');
 const { login } = require('../controllers/cognito.controller');
+const { getIdUsuario } = require('../controllers/mysql.controller');
 
 router.get('/', (req, res) => {
     res.status(200).json({ message: "API corriendo" });
@@ -9,14 +9,20 @@ router.get('/', (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { user, password } = req.body;
-        //Cognito
-        const result = login(user, pass);
-        console.log(result);
+        
+        const result = await login(user, password);
         if (result.status) {
-            //Consultar mysql para obtener id_usuario
-            return res.status(200).json({ok: true, id_usuario: result.id_usuario});
+            const usuario = await getIdUsuario(user);
+            if (usuario.status) {
+                //Manejar id usuario o jwt que devuelve cognito?
+                return res.status(200).json({ok: true, id_usuario: usuario.id_usuario});
+            } else {
+                console.log('Usuario no existe en la base de datos.');
+            }
+            console.log(result.response)
+        } else {
+            console.log(result.error);
         }
-        console.log('Correo y/o contraseña incorrectos.')
         res.status(401).json({ok: false});
     } catch (error) {
         console.log(error);
