@@ -1,5 +1,4 @@
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-const crypto = require('crypto');
 const poolData = {
     UserPoolId: process.env.COGNITO_USER_POOL_ID,
     ClientId: process.env.COGNITO_CLIENT_ID
@@ -44,10 +43,9 @@ function registro(nombre, correo, dpi, password, foto) {
 }
 
 async function login(correo, password) {
-    const hash = crypto.createHash('sha256').update(password).digest('hex')
     const authenticationData = {
         Username: correo,
-        Password: password //+ 'D**'
+        Password: password
     };
     const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(
         authenticationData
