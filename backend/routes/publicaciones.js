@@ -7,7 +7,7 @@ router.post('/crear-publicacion', async (req, res) => {
         const { imagen, descripcion, id_usuario } = req.body;
         const result = await createPublicacion(descripcion, id_usuario);
         if (result.status) {
-            guardarImagen('publicaciones/' + result.id_publicacion, imagen);
+            await guardarImagen('publicaciones/' + result.id_publicacion, imagen);
             return res.status(200).json({ ok: true });
         }
         console.log('Error al crear publicación.');

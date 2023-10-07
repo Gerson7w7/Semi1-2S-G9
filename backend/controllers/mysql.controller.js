@@ -17,29 +17,17 @@ function getIdUsuario(correo) {
     });
 }
 
-function getCredencialesUsuario(id_usuario) {
+function getPasswordUsuario(id_usuario) {
     return new Promise((resolve, reject) => {
-        conn.query('SELECT correo, password FROM Usuarios WHERE id_usuario = ?', id_usuario, ((err, result) => {
+        conn.query('SELECT password FROM Usuarios WHERE id_usuario = ?', id_usuario, ((err, result) => {
             if (err) {
                 reject(err);
             } else {
                 if (result.length > 0) {
-                    resolve({ status: true, correo: result[0].correo, password: result[0].password });
+                    resolve({ status: true, password: result[0].password });
                 } else {
                     resolve({ status: false });
                 }
-            }
-        }));
-    });
-}
-
-function getIdAllUsuarios() {
-    return new Promise((resolve, reject) => {
-        conn.query('SELECT id_usuario FROM Usuarios', ((err, result) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
             }
         }));
     });
@@ -61,7 +49,6 @@ function createPublicacion(descripcion, id_usuario) {
 
 module.exports = { 
     getIdUsuario,
-    getCredencialesUsuario,
-    getIdAllUsuarios,
+    getPasswordUsuario,
     createPublicacion
 };

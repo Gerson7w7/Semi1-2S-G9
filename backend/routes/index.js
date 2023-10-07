@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { login, registro } = require('../controllers/cognito.controller');
 const { compararFotos } = require('../controllers/rekognition.controller');
 const { getImagen } = require('../controllers/s3.controller');
-const { getIdUsuario, getCredencialesUsuario, getIdAllUsuarios } = require('../controllers/mysql.controller');
+const { getIdUsuario, getPasswordUsuario } = require('../controllers/mysql.controller');
 const crypto = require('crypto');
 router.get('/', (req, res) => {
     res.status(200).json({ message: "API corriendo" });
@@ -18,7 +18,7 @@ router.post('/login', async (req, res) => {
             if (usuario.status) {
                 return res.status(200).json({ok: true, id_usuario: usuario.id_usuario, jwt: result.response.idToken.jwtToken});
             } else {
-                console.log('Usuario no existe en la base de datos.');
+                console.log('Usuario no existe.');
             }
         } else {
             console.log(result.error);
@@ -33,38 +33,29 @@ router.post('/login', async (req, res) => {
 
 router.post('/login-facial', async (req, res) => {
     try {
-        const foto = req.body.foto;
-
-        const usuarios = await getIdAllUsuarios();
-        let credenciales = null;
-        let id_usuario = null;
-        if (usuarios.length > 0) {
-            for (let i = 0; i < usuarios.length; i++) {
-                const fotoUsuario = await getImagen('usuarios/' + usuarios[i].id_usuario);
-                const rekognition = await compararFotos(foto, fotoUsuario.image);
-                if (rekognition.similarity > 85) {
-                    credenciales = await getCredencialesUsuario(usuarios[i].id_usuario);
-                    id_usuario = usuarios[i].id_usuario;
-                    break;
-                }
-            }
-            if (credenciales != null) {
-                if (credenciales.status) {
-                    const result = await login(credenciales.correo, credenciales.password);
+        const { user, foto } = req.body;
+        const usuario = getIdUsuario(user);
+        if (usuario.status) {
+            const fotoUsuario = await getImagen('usuarios/' + usuario.id_usuario);
+            const rekognition = await compararFotos(foto, fotoUsuario.image);
+            if (rekognition.similarity > 85) {
+                const pass = await getPasswordUsuario(usuario.id_usuario);
+                if (pass.status) {
+                    const result = await login(user, pass.password);
                     if (result.status) {
-                        return res.status(200).json({ok: true, id_usuario: id_usuario, jwt: result.response.idToken.jwtToken});
+                        return res.status(200).json({ok: true, id_usuario: usuario.id_usuario, jwt: result.response.idToken.jwtToken});
                     } else {
-                        console.log('Usuario no existe en la base de datos.');
+                        console.log('Usuario no existe.');
                     }
                 } else {
                     console.log('Usuario no existe en la base de datos.');
                 }
+            } else {
+                console.log('El rostro no coincide con el usuario.');
             }
         } else {
-            console.log('No hay usuarios en la base de datos.');
+            console.log('Usuario no existe en la base de datos.');
         }
-        
-        console.log('El rostro no coincide con ningún usuario.');
         res.status(401).json({ok: false});
     } catch (error) {
         console.log(error);
