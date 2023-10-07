@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { login } = require('../controllers/cognito.controller');
+const { login, registro } = require('../controllers/cognito.controller');
 const { compararFotos } = require('../controllers/rekognition.controller');
 const { getImagen } = require('../controllers/s3.controller');
 const { getIdUsuario, getCredencialesUsuario, getIdAllUsuarios } = require('../controllers/mysql.controller');
@@ -75,11 +75,11 @@ router.post('/login-facial', async (req, res) => {
 
 router.post('/registro', async (req, res) => {
     try {
-        const { nombre, correo, dpi, password, foto } = req.body;
-        if(nombre === '' || correo  === '' || dpi  === '' || password  === '' || foto === '') res.status(400).json({ok : false, message : "Campos vacíos."})
-        if(nombre || correo  || dpi  || password  || foto){
+        const { nombre, correo, dpi, password, imagen } = req.body;
+        if(nombre === '' || correo  === '' || dpi  === '' || password  === '' || imagen === '') res.status(400).json({ok : false, message : "Campos vacíos."})
+        if(nombre || correo  || dpi  || password  || imagen){
         //Cognito
-            const result = registro(nombre, correo, dpi, password, foto)
+            const result = registro(nombre, correo, dpi, password, imagen)
             console.log(result)
             if(result)
                 res.status(200).json({ok : true, message : "Usuario registrado con éxito."})

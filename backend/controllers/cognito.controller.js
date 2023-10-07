@@ -27,10 +27,6 @@ function registro(nombre, correo, dpi, password, foto) {
             Name: 'nickname',
             Value: dpi,
           },
-          {
-            Name: 'picture',
-            Value: foto,
-          },
           // Puedes agregar más atributos personalizados aquí si es necesario.
         ],
       };

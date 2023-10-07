@@ -43,8 +43,10 @@ const Login = () => {
           console.log("res: ", res);
           const inicioExitoso = res.ok; // true o false
           if (inicioExitoso) {
+            localStorage.setItem("jwt", res.jwt);
             localStorage.setItem("id_usuario", res.id_usuario);
             navigate("/inicio");
+
           } else {
             setShowError(true);
           }
@@ -75,6 +77,7 @@ const Login = () => {
           console.log("res: ", res);
           const inicioExitoso = res.ok; // true o false
           if (inicioExitoso) {
+            localStorage.setItem("jwt", res.jwt);
             localStorage.setItem("id_usuario", res.id_usuario);
             navigate("/inicio");
           } else {
