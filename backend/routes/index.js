@@ -1,15 +1,9 @@
 const router = require('express').Router();
-<<<<<<< HEAD
-const sha256 = require('js-sha256');
-const { login, registro } = require('../controllers/cognito.controller');
-=======
 const { login } = require('../controllers/cognito.controller');
 const { compararFotos } = require('../controllers/rekognition.controller');
 const { getImagen } = require('../controllers/s3.controller');
 const { getIdUsuario, getCredencialesUsuario, getIdAllUsuarios } = require('../controllers/mysql.controller');
 const crypto = require('crypto');
->>>>>>> 456f5c97037cca34b7b4ca214a950b75ab076bec
-
 router.get('/', (req, res) => {
     res.status(200).json({ message: "API corriendo" });
 });
