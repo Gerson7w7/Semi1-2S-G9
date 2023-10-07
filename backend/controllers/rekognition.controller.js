@@ -1,6 +1,10 @@
 var AWS = require('aws-sdk');
-
-const rek = new AWS.Rekognition(aws_keys.rekognition)
+const rekognition_keys = {
+    region: process.env.REGION,
+    accessKeyId: process.env.ACCESS_KEY_ID,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY
+};
+const rek = new AWS.Rekognition(rekognition_keys)
 
 function compararFotos(fotoPrincipal, fotoComparacion) {
     var params = {
@@ -10,15 +14,17 @@ function compararFotos(fotoPrincipal, fotoComparacion) {
         TargetImage: {
             Bytes: Buffer.from(fotoComparacion, 'base64')
         },
-        SimilarityThreshold: '80', // porcentaje para hacer en la comparacion, limite de similitud
+        SimilarityThreshold: '85', // porcentaje para hacer en la comparacion, limite de similitud
     }
-    rek.compareFaces(params, function (err, data) {
-        if (err) {
-            throw err;
-        } else {
-            return data.FaceMatches;
-        }
-    })
+    return new Promise((resolve, reject) => {
+        rek.compareFaces(params, function (err, data) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve({similarity: data.FaceMatches[0].Similarity});
+            }
+        })
+    });
 }
 
 module.exports = { compararFotos }

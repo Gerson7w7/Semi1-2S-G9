@@ -47,11 +47,10 @@ function registro(nombre, correo, dpi, password, foto) {
     
 }
 
-function login(correo, password) {
-    const hash = crypto.createHash('sha256').update(password).digest('hex')
+async function login(correo, password) {
     const authenticationData = {
         Username: correo,
-        Password: hash + 'D**'
+        Password: password
     };
     const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(
         authenticationData
@@ -61,21 +60,30 @@ function login(correo, password) {
         Pool: cognito
     };
 
-    const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData)
-    cognitoUser.authenticateUser(authenticationDetails, {
-        onSuccess: function (result) {
-            // User authentication was successful
-            return result;
-        },
-        onFailure: function (err) {
-            // User authentication was not successful
-            throw err
-        },
-        mfaRequired: function (codeDeliveryDetails) {
-            // MFA is required to complete user authentication.
-            // Get the code from user and call
-            cognitoUser.sendMFACode(verificationCode, this)
-        },
+    const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    return new Promise((resolve, reject) => {
+        cognitoUser.authenticateUser(authenticationDetails, {
+            onSuccess: function (result) {
+                // User authentication was successful
+                resolve({status: true, response: result});
+            },
+            onFailure: function (err) {
+                // User authentication was not successful
+                resolve({status: false, error: "Usuario y/o contraseña incorrectos."});
+            },
+            mfaRequired: function (codeDeliveryDetails) {
+                // MFA is required to complete user authentication.
+                // Get the code from user and call
+                cognitoUser.sendMFACode(verificationCode, this);
+                resolve({status: false, error: "MFA requerido."});
+            },
+            newPasswordRequired: function(userAttributes, requiredAttributes) {
+                // User was signed up by an admin and must provide new
+                // password and required attributes, if any, to complete
+                // authentication.
+                resolve({status: false, error: "Es necesario cambiar la contraseña."});
+            }
+        });
     });
 }
 
