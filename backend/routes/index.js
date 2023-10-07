@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const sha256 = require('js-sha256');
-const { login } = require('../controllers/cognito.controller');
+const { login, registro } = require('../controllers/cognito.controller');
 
 router.get('/', (req, res) => {
     res.status(200).json({ message: "API corriendo" });
@@ -45,7 +45,20 @@ router.post('/login-facial', async (req, res) => {
 router.post('/registro', async (req, res) => {
     try {
         const { nombre, correo, dpi, password, foto } = req.body;
+        if(nombre === '' || correo  === '' || dpi  === '' || password  === '' || foto === '') res.status(400).json({ok : false, message : "Campos vacíos."})
+        if(nombre || correo  || dpi  || password  || foto){
+        //Cognito
+            const result = registro(nombre, correo, dpi, password, foto)
+            console.log(result)
+            if(result)
+                res.status(200).json({ok : true, message : "Usuario registrado con éxito."})
+            else
+                res.status(400).json({ok : false, message : "Error al registrar usuario."})
         
+        }else {
+            res.status(400).json({ok : false, message : "Campos undefined."})
+        }      
+
     } catch (error) {
         console.log(error);
         res.status(400).json({ok: false})

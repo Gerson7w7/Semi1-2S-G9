@@ -1,46 +1,50 @@
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
+const AWS = require('aws-sdk');
+const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'us-east-1' }); // Reemplaza 'tu-region' con la región de tu User Pool.
+
 const crypto = require('crypto');
 const poolData = {
     UserPoolId: process.env.COGNITO_USER_POOL_ID,
     ClientId: process.env.COGNITO_CLIENT_ID
 };
-const cognito = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
 function registro(nombre, correo, dpi, password, foto) {
-    let attributeList = [];
 
-    const dataNombre = {
-        Name: 'nombre',
-        Value: nombre  
-    };
-
-    const dataDpi = {
-        Name: 'dpi',
-        Value: dpi
-    };
-
-    const dataFoto = {
-        Name: 'foto',
-        Value: foto  
-    };
-
-    const attributeNombre = new AmazonCognitoIdentity.CognitoUserAttribute(dataNombre);
-    const attributeDpi = new AmazonCognitoIdentity.CognitoUserAttribute(dataDpi);
-    const attributeFoto = new AmazonCognitoIdentity.CognitoUserAttribute(dataFoto);
-
-    attributeList.push(attributeNombre);
-    attributeList.push(attributeDpi);
-    attributeList.push(attributeFoto);
+    const params = {
+        ClientId: process.env.COGNITO_CLIENT_ID, // Reemplaza 'tu-app-client-id' con el ID de tu cliente de aplicación.
+        Username: correo,
+        Password: password,
+        UserAttributes: [
+          {
+            Name: 'name',
+            Value: nombre,
+          },
+          {
+            Name: 'email',
+            Value: correo,
+          },
+          {
+            Name: 'nickname',
+            Value: dpi,
+          },
+          {
+            Name: 'picture',
+            Value: foto,
+          },
+          // Puedes agregar más atributos personalizados aquí si es necesario.
+        ],
+      };
     
-    const hash = crypto.createHash('sha256').update(password).digest('hex')
-
-    cognito.signUp(correo, hash + 'D**', attributeList, null, async(err, data) => {
-        if (err) {
-            throw err;
-        } else {
-            console.log(data);
-        }
-    });
+      try {
+        return cognito.signUp(params).promise();
+      } catch (error) {
+        console.error('Error al registrar usuario en Cognito', error);
+        return {
+          statusCode: 500,
+          body: JSON.stringify({ message: 'Error al registrar usuario' }),
+        };
+      }
+    
 }
 
 function login(correo, password) {
