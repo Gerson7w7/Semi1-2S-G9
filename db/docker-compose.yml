@@ -3,7 +3,7 @@ version: '3' # versión de docker
 services:
   db:
     container_name: db
-    build: ./db/
+    build: .
     image: db_proyecto2_semi1
     restart: always
     ports:
