@@ -4,6 +4,7 @@ const { compararFotos } = require('../controllers/rekognition.controller');
 const { getImagen } = require('../controllers/s3.controller');
 const { getIdUsuario, getPasswordUsuario } = require('../controllers/mysql.controller');
 const crypto = require('crypto');
+
 router.get('/', (req, res) => {
     res.status(200).json({ message: "API corriendo" });
 });
@@ -14,14 +15,13 @@ router.post('/login', async (req, res) => {
         const hash = crypto.createHash('sha256').update(password).digest('hex')
         const result = await login(user, hash);
         if (result.status) {
-            const usuario = await getIdUsuario(user);
-            if (usuario.status) {
-                return res.status(200).json({ok: true, id_usuario: usuario.id_usuario, jwt: result.response.idToken.jwtToken});
-            } else {
-                console.log('Usuario no existe.');
-            }
+            return res.status(200).json({ok: true, jwt: result.response.idToken.jwtToken});
         } else {
-            console.log(result.error);
+            if (result.error.code == 'UserNotConfirmedException') {
+                console.log("Debe verificar su correo antes de iniciar sesión");
+            } else {
+                console.log(result.error);
+            }
         }
         res.status(401).json({ok: false});
     } catch (error) {
@@ -43,12 +43,16 @@ router.post('/login-facial', async (req, res) => {
                 if (pass.status) {
                     const result = await login(user, pass.password);
                     if (result.status) {
-                        return res.status(200).json({ok: true, id_usuario: usuario.id_usuario, jwt: result.response.idToken.jwtToken});
+                        return res.status(200).json({ok: true, jwt: result.response.idToken.jwtToken});
                     } else {
-                        console.log('Usuario no existe.');
+                        if (result.error.code == 'UserNotConfirmedException') {
+                            console.log("Debe verificar su correo antes de iniciar sesión");
+                        } else {
+                            console.log(result.error);
+                        }
                     }
                 } else {
-                    console.log('Usuario no existe en la base de datos.');
+                    console.log('No existe el usuario en la base de datos.');
                 }
             } else {
                 console.log('El rostro no coincide con el usuario.');

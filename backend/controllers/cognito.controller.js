@@ -2,11 +2,11 @@ const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
 const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'us-east-1' }); // Reemplaza 'tu-region' con la región de tu User Pool.
 
-const crypto = require('crypto');
 const poolData = {
     UserPoolId: process.env.COGNITO_USER_POOL_ID,
     ClientId: process.env.COGNITO_CLIENT_ID
 };
+const poolUsers = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
 function registro(nombre, correo, dpi, password, foto) {
 
@@ -53,7 +53,7 @@ async function login(correo, password) {
     );
     var userData = {
         Username: correo,
-        Pool: cognito
+        Pool: poolUsers
     };
 
     const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
@@ -65,7 +65,7 @@ async function login(correo, password) {
             },
             onFailure: function (err) {
                 // User authentication was not successful
-                resolve({status: false, error: "Usuario y/o contraseña incorrectos."});
+                resolve({status: false, error: err, message: "Usuario y/o contraseña incorrectos."});
             },
             mfaRequired: function (codeDeliveryDetails) {
                 // MFA is required to complete user authentication.
