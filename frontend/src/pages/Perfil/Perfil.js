@@ -20,13 +20,12 @@ function Perfil() {
 
   useEffect(() => {
     const url = `${ip}/perfil`;
-    const data = { id_usuario: localStorage.getItem("id_usuario") };
-    console.log("data: ", data);
+    const token = localStorage.getItem("jwt");
     fetch(url, {
-      method: "POST",
-      body: JSON.stringify(data),
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => res.json())

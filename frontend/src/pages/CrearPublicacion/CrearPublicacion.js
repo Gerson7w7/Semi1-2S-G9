@@ -34,7 +34,8 @@ const CrearPublicacion = () => {
   const mostrarError = (event) => {
     return (
       <div className="alert alert-dismissible alert-danger">
-        <strong>Oh no!</strong> Parece ser que no se ha podido crear la publicación. Intente luego.
+        <strong>Oh no!</strong> Parece ser que no se ha podido crear la
+        publicación. Intente luego.
       </div>
     );
   };
@@ -43,10 +44,11 @@ const CrearPublicacion = () => {
     let base64Image = await convertToBase64(imagen);
     base64Image = base64Image.split(",")[1];
     const url = `${ip}/crear-publicacion`;
+    const token = localStorage.getItem("jwt");
+    console.log("token: ", token);  
     let data = {
       imagen: base64Image,
       descripcion: descripcion,
-      id_usuario: localStorage.getItem("id_usuario"),
     };
     console.log("data: ", data);
     const fetchData = async () => {
@@ -55,17 +57,17 @@ const CrearPublicacion = () => {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       })
         .then((res) => res.json())
         .catch((error) => console.error("Error:", error))
         .then((res) => {
           console.log("res: ", res);
-          const inicioExitoso = res.ok; // true o false
-          if (inicioExitoso) {
-            navigate("/inicio");
+          if (res.ok) {
+            alert("Publicación creada exitosamente");
           } else {
-            setShowError(true);
+            alert("No se ha podido crear la publicación");
           }
         });
     };

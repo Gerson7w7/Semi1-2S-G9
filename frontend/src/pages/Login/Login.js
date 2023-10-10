@@ -18,6 +18,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
+  const [mensaje, setMensaje] = useState("");
   const [showError, setShowError] = useState(false);
   const [open, setOpen] = useState(false);
   const webcamRef = React.useRef(null);
@@ -44,10 +45,9 @@ const Login = () => {
           const inicioExitoso = res.ok; // true o false
           if (inicioExitoso) {
             localStorage.setItem("jwt", res.jwt);
-            localStorage.setItem("id_usuario", res.id_usuario);
             navigate("/inicio");
-
           } else {
+            setMensaje(res.mensaje);
             setShowError(true);
           }
         });
@@ -60,7 +60,7 @@ const Login = () => {
     console.log("inicio facial")
     let foto = webcamRef.current.getScreenshot();
     foto = foto.replace("data:image/jpeg;base64,", "");
-    let data = { foto: foto };
+    let data = { user: user, foto: foto };
     console.log("data: ", data);
     const url = `${ip}/login-facial`;
     const fetchData = async () => {
@@ -81,6 +81,7 @@ const Login = () => {
             localStorage.setItem("id_usuario", res.id_usuario);
             navigate("/inicio");
           } else {
+            setMensaje(res.mensaje);
             setOpen(false);
             setShowError(true);
           }
@@ -108,8 +109,7 @@ const Login = () => {
   const mostrarError = (event) => {
     return (
       <div className="alert alert-dismissible alert-danger">
-        <strong>Oh no!</strong> Parece ser que no se han reconocido los datos que haz ingresado. 
-        Por favor, vuelve a intentarlo.
+        <strong>Oh no!</strong> { mensaje }
       </div>
     );
   };

@@ -13,16 +13,14 @@ const ChatAmigos = () => {
 
   useEffect(() => {
     const url = `${ip}/get-amigos`;
-    const user = localStorage.getItem("id_usuario");
-    let data = { id_usuario: user };
-    console.log("data: ", data);
+    const token = localStorage.getItem("jwt");
 
     const fetchData = async () => {
       fetch(url, {
         method: "POST",
-        body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       })
         .then((res) => res.json())
@@ -30,7 +28,7 @@ const ChatAmigos = () => {
         .then((res) => {
           console.log("res: ", res);
           setAmigos(res.amigos);
-          setUser1({ id: user, nombre: res.nombre });
+          setUser1({ id: res.userid, nombre: res.nombre });
         });
     };
     fetchData();

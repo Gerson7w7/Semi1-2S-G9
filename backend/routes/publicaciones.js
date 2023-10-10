@@ -11,10 +11,10 @@ router.post('/crear-publicacion', async (req, res) => {
             return res.status(200).json({ ok: true });
         }
         console.log('Error al crear publicación.');
-        res.status(400).json({ ok: false });
+        res.status(400).json({ok : false, mensaje : "Error al crear publicación."})
     } catch (error) {
         console.log(error);
-        res.status(400).json({ ok: false });
+        res.status(400).json({ok : false, mensaje : "Error al crear publicación."})
     }
 });
 

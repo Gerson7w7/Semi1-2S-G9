@@ -18,15 +18,15 @@ router.post('/login', async (req, res) => {
             return res.status(200).json({ok: true, jwt: result.response.idToken.jwtToken});
         } else {
             if (result.error.code == 'UserNotConfirmedException') {
-                console.log("Debe verificar su correo antes de iniciar sesión");
+                return res.status(401).json({ok: false, mensaje: "Debe verificar su correo antes de iniciar sesión"});
             } else {
                 console.log(result.error);
+                return res.status(401).json({ok: false, mensaje: "Error inseperado"});
             }
         }
-        res.status(401).json({ok: false});
     } catch (error) {
         console.log(error);
-        res.status(400).json({ok: false})
+        res.status(400).json({ok: false, mensaje: "Error inseperado"})
     }
     
 });
@@ -46,26 +46,28 @@ router.post('/login-facial', async (req, res) => {
                         return res.status(200).json({ok: true, jwt: result.response.idToken.jwtToken});
                     } else {
                         if (result.error.code == 'UserNotConfirmedException') {
-                            console.log("Debe verificar su correo antes de iniciar sesión");
+                            return res.status(401).json({ok: false, mensaje: "Debe verificar su correo antes de iniciar sesión"});
                         } else {
                             console.log(result.error);
+                            return res.status(401).json({ok: false, mensaje: "Error inseperado"});
                         }
                     }
                 } else {
                     console.log('No existe el usuario en la base de datos.');
+                    return res.status(401).json({ok: false, mensaje: "No existe el usuario en la base de datos."});
                 }
             } else {
                 console.log('El rostro no coincide con el usuario.');
+                return res.status(401).json({ok: false, mensaje: "El rostro no coincide con el usuario."});
             }
         } else {
             console.log('Usuario no existe en la base de datos.');
+            return res.status(401).json({ok: false, mensaje: "Usuario no existe en la base de datos."});
         }
-        res.status(401).json({ok: false});
     } catch (error) {
         console.log(error);
-        res.status(400).json({ok: false})
+        return res.status(401).json({ok: false, mensaje: "Error inseperado"});
     }
-    
 });
 
 router.post('/registro', async (req, res) => {
@@ -79,12 +81,12 @@ router.post('/registro', async (req, res) => {
             const result = await registro(nombre, correo, dpi, passwordSha, imagen)
             console.log(result)
             if(result)
-                res.status(200).json({ok : true, message : "Usuario registrado con éxito."})
+                res.status(200).json({ok : true, mensaje : "Usuario registrado con éxito."})
             else
-                res.status(400).json({ok : false, message : "Error al registrar usuario."})
+                res.status(400).json({ok : false, mensaje : "Error al registrar usuario."})
         
         }else {
-            res.status(400).json({ok : false, message : "Campos undefined."})
+            res.status(400).json({ok : false, mensaje : "Campos undefined."})
         }      
 
     } catch (error) {

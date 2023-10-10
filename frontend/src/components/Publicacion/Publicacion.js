@@ -1,8 +1,9 @@
 import React from "react";
 
 const Publicacion = (props) => {
-  const { usuario, fecha, imagen, descripcion, comentarios } = props;    
+  const { idpublicacion, usuario, fecha, imagen, descripcion } = props;    
 
+  
   return (
     <main>
       

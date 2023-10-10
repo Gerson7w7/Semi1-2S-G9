@@ -14,15 +14,14 @@ const FiltrarPublicacion = () => {
 
   useEffect(() => {
     const url = `${ip}/get-etiquetas`;
-    let data = { id_usuario: localStorage.getItem("id_usuario") };
-    console.log("data: ", data);
+    const token = localStorage.getItem("jwt");
 
     const fetchData = async () => {
       fetch(url, {
-        method: "POST",
-        body: JSON.stringify(data),
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       })
         .then((res) => res.json())
@@ -38,9 +37,9 @@ const FiltrarPublicacion = () => {
 
   const filtrarPublicaciones = () => {
     const url = `${ip}/filtrar-publicaciones`;
+    const token = localStorage.getItem("jwt");
     let data = {
       etiqueta: buscarEtiqueta === '' ? selecEtiqueta : buscarEtiqueta,
-      id_usuario: localStorage.getItem("id_usuario"),
     };
     console.log("data: ", data);
     const fetchData = async () => {
@@ -49,6 +48,7 @@ const FiltrarPublicacion = () => {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       })
         .then((res) => res.json())
