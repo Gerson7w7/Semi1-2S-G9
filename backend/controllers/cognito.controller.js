@@ -1,5 +1,7 @@
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
+const { registrarUsuario } = require('./mysql.controller');
+const { guardarImagen } = require('./s3.controller');
 const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'us-east-1' }); // Reemplaza 'tu-region' con la región de tu User Pool.
 
 const poolData = {
@@ -8,7 +10,10 @@ const poolData = {
 };
 const poolUsers = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
-function registro(nombre, correo, dpi, password, foto) {
+async function registro(nombre, correo, dpi, password, foto)  {
+
+    const resultRegistro = await registrarUsuario(nombre, correo, dpi, password)
+    await guardarImagen('usuarios/' + resultRegistro.id_usuario, foto);
 
     const params = {
         ClientId: process.env.COGNITO_CLIENT_ID, // Reemplaza 'tu-app-client-id' con el ID de tu cliente de aplicación.
@@ -24,8 +29,12 @@ function registro(nombre, correo, dpi, password, foto) {
             Value: correo,
           },
           {
-            Name: 'nickname',
+            Name: 'custom:dpi',
             Value: dpi,
+          },
+          {
+            Name: 'custom:id_usuario',
+            Value: resultRegistro.id_usuario+"",
           },
           // Puedes agregar más atributos personalizados aquí si es necesario.
         ],

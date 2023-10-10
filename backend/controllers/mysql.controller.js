@@ -33,6 +33,19 @@ function getPasswordUsuario(id_usuario) {
     });
 }
 
+function registrarUsuario(nombre, correo, dpi, password) {
+    return new Promise((resolve, reject) => {
+        conn.query('INSERT INTO Usuarios (nombre, correo, dpi, password) VALUES (?, ?, ?, ?)',
+            [nombre, correo, dpi, password], ((err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve({ status: true, id_usuario: result.insertId});
+                }
+            }));
+    });
+}
+
 //=========================================== PUBLICACIONES ===========================================
 function createPublicacion(descripcion, id_usuario) {
     return new Promise((resolve, reject) => {
@@ -50,5 +63,6 @@ function createPublicacion(descripcion, id_usuario) {
 module.exports = { 
     getIdUsuario,
     getPasswordUsuario,
+    registrarUsuario,
     createPublicacion
 };

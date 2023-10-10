@@ -4,6 +4,7 @@ const { compararFotos } = require('../controllers/rekognition.controller');
 const { getImagen } = require('../controllers/s3.controller');
 const { getIdUsuario, getPasswordUsuario } = require('../controllers/mysql.controller');
 const crypto = require('crypto');
+const sha256 = require('js-sha256');
 
 router.get('/', (req, res) => {
     res.status(200).json({ message: "API corriendo" });
@@ -71,10 +72,12 @@ router.post('/login-facial', async (req, res) => {
 router.post('/registro', async (req, res) => {
     try {
         const { nombre, correo, dpi, password, imagen } = req.body;
-        if(nombre === '' || correo  === '' || dpi  === '' || password  === '' || imagen === '') res.status(400).json({ok : false, message : "Campos vacíos."})
-        if(nombre || correo  || dpi  || password  || imagen){
+        const passwordSha = sha256(password);
+        console.log("contraseña encriptada ", passwordSha)
+        if(nombre === '' || correo  === '' || dpi  === '' || passwordSha  === '' || imagen === '') res.status(400).json({ok : false, message : "Campos vacíos."})
+        if(nombre || correo  || dpi  || passwordSha  || imagen){
         //Cognito
-            const result = registro(nombre, correo, dpi, password, imagen)
+            const result = await registro(nombre, correo, dpi, passwordSha, imagen)
             console.log(result)
             if(result)
                 res.status(200).json({ok : true, message : "Usuario registrado con éxito."})
