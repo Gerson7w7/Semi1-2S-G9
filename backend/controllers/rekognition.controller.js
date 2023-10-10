@@ -14,14 +14,14 @@ function compararFotos(fotoPrincipal, fotoComparacion) {
         TargetImage: {
             Bytes: Buffer.from(fotoComparacion, 'base64')
         },
-        SimilarityThreshold: '85', // porcentaje para hacer en la comparacion, limite de similitud
+        SimilarityThreshold: '90', // porcentaje para hacer en la comparacion, limite de similitud
     }
     return new Promise((resolve, reject) => {
         rek.compareFaces(params, function (err, data) {
             if (err) {
                 reject(err);
             } else {
-                resolve({similarity: data.FaceMatches[0].Similarity});
+                resolve({similarity: data.FaceMatches.length > 0});
             }
         })
     });

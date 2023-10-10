@@ -3,7 +3,6 @@ const { login, registro } = require('../controllers/cognito.controller');
 const { compararFotos } = require('../controllers/rekognition.controller');
 const { getImagen } = require('../controllers/s3.controller');
 const { getIdUsuario, getPasswordUsuario } = require('../controllers/mysql.controller');
-const crypto = require('crypto');
 const sha256 = require('js-sha256');
 
 router.get('/', (req, res) => {
@@ -13,7 +12,7 @@ router.get('/', (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { user, password } = req.body;
-        const hash = crypto.createHash('sha256').update(password).digest('hex')
+        const hash = sha256(password);
         const result = await login(user, hash);
         if (result.status) {
             return res.status(200).json({ok: true, jwt: result.response.idToken.jwtToken});
@@ -35,11 +34,11 @@ router.post('/login', async (req, res) => {
 router.post('/login-facial', async (req, res) => {
     try {
         const { user, foto } = req.body;
-        const usuario = getIdUsuario(user);
+        const usuario = await getIdUsuario(user);
         if (usuario.status) {
             const fotoUsuario = await getImagen('usuarios/' + usuario.id_usuario);
             const rekognition = await compararFotos(foto, fotoUsuario.image);
-            if (rekognition.similarity > 85) {
+            if (rekognition.similarity) {
                 const pass = await getPasswordUsuario(usuario.id_usuario);
                 if (pass.status) {
                     const result = await login(user, pass.password);

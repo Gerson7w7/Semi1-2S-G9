@@ -9,7 +9,7 @@ const { verifyToken } = require('./controllers/auth.controller');
 
 const app = express();
 
-app.set('port', 5000);
+app.set('port', process.env.API_PORT || 2000);
 app.use(bodyParser.json({limit: '10mb', extended: true}));
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
 app.set('json spaces', 2);

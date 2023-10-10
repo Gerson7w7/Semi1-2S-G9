@@ -19,7 +19,7 @@ async function verifyToken(req, res, next) {
         if (!verifiedToken) {
             return res.status(401).json({ok: false, message: 'Invalid token.'});
         }
-        req.body.id_usuario = verifiedToken.id_usuario;
+        req.body.id_usuario = verifiedToken["custom:id_usuario"];
         next();
     } catch (error) {
         console.log(error);

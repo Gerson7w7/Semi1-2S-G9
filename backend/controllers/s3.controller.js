@@ -19,8 +19,7 @@ async function guardarImagen(id, img64) {
         Body: buff,
         ContentType: 'image',
     }
-    const res = await s3.putObject(params).promise();
-    console.log("s3 res:", res);
+    await s3.putObject(params).promise();
 }
 
 function getImagen(id) {
