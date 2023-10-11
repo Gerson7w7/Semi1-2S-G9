@@ -68,7 +68,7 @@ const FiltrarPublicacion = () => {
 
       <div class="contenido album py-5 ">
         <div class="container">
-          <h1>Filtrar Publicaiones</h1>
+          <h1>Filtrar Publicaciones</h1>
           <Box sx={{ flexGrow: 1 }}>
             <Grid
               container
@@ -129,7 +129,7 @@ const FiltrarPublicacion = () => {
             comentarios={p.comentarios}
           />
         ))}
-        {/* <Publicacion /> */}
+        { <Publicacion /> }
       </div>
     </main>
   );
