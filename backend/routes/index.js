@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { login, registro } = require('../controllers/cognito.controller');
-const { compararFotos } = require('../controllers/rekognition.controller');
+const { comparePics } = require('../controllers/rekognition.controller');
 const { getImagen } = require('../controllers/s3.controller');
 const { getIdUsuario, getPasswordUsuario } = require('../controllers/mysql.controller');
 const sha256 = require('js-sha256');
@@ -37,7 +37,7 @@ router.post('/login-facial', async (req, res) => {
         const usuario = await getIdUsuario(user);
         if (usuario.status) {
             const fotoUsuario = await getImagen('usuarios/' + usuario.id_usuario);
-            const rekognition = await compararFotos(foto, fotoUsuario.image);
+            const rekognition = await comparePics(foto, fotoUsuario.image);
             if (rekognition.similarity) {
                 const pass = await getPasswordUsuario(usuario.id_usuario);
                 if (pass.status) {

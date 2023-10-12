@@ -86,6 +86,53 @@ function getPublicaciones(id_usuario) {
     });
 }
 
+function getIdLabelByName(name) {
+    return new Promise((resolve, reject) => {
+        conn.query('SELECT id_etiqueta FROM Etiquetas WHERE nombre = ?', name, ((err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                if (result.length > 0) {
+                    resolve({ status: true, id_label: result[0].id_etiqueta });
+                } else {
+                    resolve({ status: false });
+                }
+            }
+        }));
+    });
+}
+
+function createLabel(name) {
+    return new Promise((resolve, reject) => {
+        conn.query('INSERT INTO Etiquetas (nombre, repeticiones) VALUES (?, 1)', name, ((err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                if (result.length > 0) {
+                    resolve({ status: true, id_label: result[0].id_etiqueta });
+                } else {
+                    resolve({ status: false });
+                }
+            }
+        }));
+    });
+}
+
+function insertLabelPublicacion(id_label, id_publicacion) {
+    conn.query('INSERT INTO Etiquetas_publicaciones (id_label, id_publicacion) VALUES (?, ?)',
+        [id_label, id_publicacion], ((err) => {
+            if (err) {
+                reject(err);
+            }
+    }));
+    conn.query('UPDATE Etiquetas SET repeticiones = repeticiones + 1 WHERE id_etiqueta = ?',
+        id_label, ((err) => {
+            if (err) {
+                reject(err);
+            }
+    }));
+}
+
 //=================================== Comentario ============================================
 function createComentario(comentario, id_publicacion, id_usuario) {
     return new Promise((resolve, reject) => {
@@ -130,5 +177,8 @@ module.exports = {
     registrarUsuario,
     createPublicacion,
     getPublicaciones,
+    getIdLabelByName,
+    createLabel,
+    insertLabelPublicacion,
     createComentario
 };
