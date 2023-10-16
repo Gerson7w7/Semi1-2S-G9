@@ -56,7 +56,7 @@ const Amigos = () => {
         const data = await response.json();
         setAgregarFriendsData(data.agregar_friends);
         setSolicitudFriendsData(data.solicitud_friends);
-        setMisFriendsData(data.solicitud_friends);
+        setMisFriendsData(data.mis_friends);
       } catch (error) {
         console.error("Error fetching data:", error.message);
       }
