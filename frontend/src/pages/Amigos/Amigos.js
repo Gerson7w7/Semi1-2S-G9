@@ -13,7 +13,7 @@ const Amigos = () => {
         nombre: "Larry "
     }*/
 
-]);
+    ]);
   const [solicitudFriendsData, setSolicitudFriendsData] = useState([
     /*{
         id_friend: 106,
@@ -23,7 +23,18 @@ const Amigos = () => {
         id_friend: 8,
         nombre: "Larry 3"
     }*/
-  ]);
+    ]);
+  
+  const [MisFriendsData, setMisFriendsData] = useState([
+        {
+            id_friend: 106,
+            nombre: "Jorge 2"
+        },
+        {
+            id_friend: 8,
+            nombre: "Larry 3"
+        }
+        ]);
   const ip = "http://localhost:5000";
   const token = localStorage.getItem("jwt");
 
@@ -45,6 +56,7 @@ const Amigos = () => {
         const data = await response.json();
         setAgregarFriendsData(data.agregar_friends);
         setSolicitudFriendsData(data.solicitud_friends);
+        setMisFriendsData(data.solicitud_friends);
       } catch (error) {
         console.error("Error fetching data:", error.message);
       }
@@ -163,6 +175,25 @@ const Amigos = () => {
             </tbody>
           </table>
         </div>
+        {/* Tabla 2 - Solicitudes de amistad */}
+        <div className="amigos-table-container">
+          <table className="amigos-table" border="1">
+            <thead>
+              <tr>
+                <th>Mis Amigos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {MisFriendsData.map((friend) => (
+                <tr key={friend.id_friend}>
+                <td>
+                  {friend.nombre}{' '}
+                </td>
+              </tr>
+              ))}
+            </tbody>
+          </table>
+          </div>
       </div>
     </main>
   );
