@@ -1,4 +1,5 @@
 const conn = require('../database/conexion.js');
+const prefijoBucket = process.env.PREFIJO_BUCKET;
 
 //============================================= USUARIOS ==============================================
 function getIdUsuario(correo) {
@@ -43,6 +44,51 @@ function registrarUsuario(nombre, correo, dpi, password) {
                     resolve({ status: true, id_usuario: result.insertId});
                 }
             }));
+    });
+}
+
+//============================================= PERFIL =============================================
+function getPerfil(id_usuario) {
+    return new Promise((resolve, reject) => {
+        conn.query('SELECT nombre, correo, dpi FROM Usuarios WHERE id_usuario = ?',
+            id_usuario, (async (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                if (result.length > 0) {
+                    resolve({
+                        status: true,
+                        nombre: result[0].nombre,
+                        email: result[0].correo,
+                        dpi: result[0].dpi.toString(),
+                        imagen: `${prefijoBucket}Fotos/usuarios/${id_usuario}.jpg`
+                    });
+                } else {
+                    resolve({ status: false })
+                }
+            }
+        }));
+    });
+}
+
+function editarPerfil(id_usuario, nombre, dpi, correo) {
+    return new Promise((resolve, reject) => {
+        conn.query(`UPDATE Usuarios
+                    SET nombre = CASE WHEN LENGTH(?) > 0 THEN ? ELSE nombres END,
+                    dpi = CASE WHEN LENGTH(?) > 0 THEN ? ELSE dpi END,
+                    correo = CASE WHEN LENGTH(?) > 0 THEN ? ELSE correo END
+                    WHERE id_usuario = ?`,
+                    [nombre, nombre, dpi, dpi, correo, correo, id_usuario], (async (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                if (result.changedRows > 0) {
+                    resolve({ status: true })
+                } else {
+                    resolve({ status: false })
+                }
+            }
+        }));
     });
 }
 
@@ -174,6 +220,8 @@ function getComentarios(id_publicacion) {
 module.exports = { 
     getIdUsuario,
     getPasswordUsuario,
+    getPerfil,
+    editarPerfil,
     registrarUsuario,
     createPublicacion,
     getPublicaciones,

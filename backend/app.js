@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const index = require('./routes/index');
 const publicaciones = require('./routes/publicaciones');
+const perfil = require('./routes/perfil');
 const { verifyToken } = require('./controllers/auth.controller');
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(cors(corsOptions));
 
 app.use('/', index);
 app.use('/', verifyToken, publicaciones);
+app.use('/', verifyToken, perfil);
 
 app.listen(app.get('port'), () => {
     console.log(`Servidor corriendo en el puerto ${app.get('port')}`);
