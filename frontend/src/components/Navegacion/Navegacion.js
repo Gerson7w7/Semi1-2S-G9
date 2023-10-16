@@ -110,11 +110,11 @@ const Navegacion = () => {
             </li>
             <li>
               <Link
-                to="/add-friend"
+                to="/friends"
                 className={`nav-link ${
-                  activeLink === "add-friend" ? "active" : ""
+                  activeLink === "friends" ? "active" : ""
                 }`}
-                onClick={() => handleLinkClick("add-friend")}
+                onClick={() => handleLinkClick("friends")}
               >
                 <img
                   class="bi pe-none me-2"
@@ -123,7 +123,7 @@ const Navegacion = () => {
                   width="25"
                   height="25"
                 />
-                Añadir amigo
+                Amigos
               </Link>
             </li>
             <li>
