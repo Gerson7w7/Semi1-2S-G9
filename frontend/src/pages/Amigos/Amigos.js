@@ -26,14 +26,14 @@ const Amigos = () => {
     ]);
   
   const [MisFriendsData, setMisFriendsData] = useState([
-        {
+        /*{
             id_friend: 106,
             nombre: "Jorge 2"
         },
         {
             id_friend: 8,
             nombre: "Larry 3"
-        }
+        }*/
         ]);
   const ip = "http://localhost:5000";
   const token = localStorage.getItem("jwt");

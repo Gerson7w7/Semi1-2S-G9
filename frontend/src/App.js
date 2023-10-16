@@ -13,6 +13,7 @@ import Amigos from "./pages/Amigos/Amigos";
 import ChatAmigos from "./pages/ChatAmigos/ChatAmigos";
 import Registro from "./pages/Registro/Registro"
 import VerPublicaciones from "./pages/VerPublicaciones/VerPublicaciones";
+import ChatBot from "./pages/ChatBot/ChatBot";
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/friends" element={<Amigos />} />
           <Route path="/chat-friends" element={<ChatAmigos />} />
+          <Route path="/chat-bot" element={<ChatBot />} />
         </Routes>
       </Router>
   );
