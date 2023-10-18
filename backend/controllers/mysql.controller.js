@@ -1,4 +1,5 @@
 const conn = require('../database/conexion.js');
+const { getImagen } = require('./s3.controller.js');
 const prefijoBucket = process.env.PREFIJO_BUCKET;
 
 //============================================= USUARIOS ==============================================
@@ -26,6 +27,22 @@ function getPasswordUsuario(id_usuario) {
             } else {
                 if (result.length > 0) {
                     resolve({ status: true, password: result[0].password });
+                } else {
+                    resolve({ status: false });
+                }
+            }
+        }));
+    });
+}
+
+function getNombreUsuario(id_usuario) {
+    return new Promise((resolve, reject) => {
+        conn.query('SELECT nombre FROM Usuarios WHERE id_usuario = ?', id_usuario, ((err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                if (result.length > 0) {
+                    resolve(result[0].nombre);
                 } else {
                     resolve({ status: false });
                 }
@@ -217,6 +234,116 @@ function getComentarios(id_publicacion) {
     });
 }
 
+//=================================== Amigos ============================================
+function agregarAmigo(estado, id_amigo, id_usuario) {
+    return new Promise((resolve, reject) => {
+        conn.query('INSERT INTO Amigo (estado, usuario_id1, usuario_id2) VALUES (?, ?, ?)',
+            [estado, id_usuario, id_amigo], ((err, result) => {
+            if (err) {
+                console.log("Error amigos bd", err)
+                reject(err);
+            } else {
+                console.log("Result amigos bd", result)
+                resolve({ status: true, message: "Agregado, espera aceptación" });
+            }
+        }));
+    });
+}
+
+function aceptarAmigo(estado, id_amigo, id_usuario) {
+    return new Promise((resolve, reject) => {
+        // OR (usuario_id1 = ? AND usuario_id2 = ?)
+        conn.query('UPDATE Amigo SET estado = ? WHERE (usuario_id1 = ? AND usuario_id2 = ?)',
+            [estado, id_amigo, id_usuario], (err, result) => {
+            if (err) {
+                console.log("Error aceptar amigos bd", err);
+                reject(err);
+            } else {
+                console.log("Result aceptar amigos bd", result);
+                resolve({ status: true, message: "Agregado" });
+            }
+        });
+    });
+}
+
+
+async function getFriends(id_usuario) {
+    return new Promise((resolve, reject) => {
+        conn.query('SELECT * FROM Amigo WHERE usuario_id1 = ? OR usuario_id2 = ?', [id_usuario, id_usuario], (async (err, result) => {
+            if (err) {
+                console.log("error en la consulta a la db en consultar amigos")
+                reject(err);
+            } else {
+                console.log("amigos consultas coincidencia", result)
+                let amigos = [];
+                let mis_amigos = [];
+                for (let amigo of result) {
+                    real_id = amigo.id_usuario1 === id_usuario ? amigo.usuario_id2 : amigo.usuario_id1
+                    amigos.push({
+                        id: real_id,
+                        estado: amigo.estado,
+                        Nombre: await getNombreUsuario(real_id),
+                        imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${real_id}.jpg`
+                    })
+                    mis_amigos.push(real_id)
+                }
+                mis_amigos.push(id_usuario)
+                not_amigos =  mis_amigos.length !== 0 ? await getNoFriends(mis_amigos) : []
+                resolve({ status: true, 'amigos': amigos, not_amigos });
+            }
+        }));
+    });
+}
+
+function getNoFriends(idUsuariosAmigos) {
+    console.log("encontrados  ", idUsuariosAmigos)
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT id_usuario, nombre FROM Usuarios WHERE id_usuario NOT IN (?)';
+        conn.query(query, [idUsuariosAmigos], (err, results) => {
+            if (err) {
+                console.log("Error al obtener usuarios no amigos", err);
+                reject(err);
+            } else {
+                
+                let noAmigos = [];
+                for (let amigo of results) {
+                    noAmigos.push({
+                        id: amigo.id_usuario,
+                        Nombre: amigo.nombre,
+                        imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${amigo.id_usuario}.jpg`
+                    })
+                }
+                resolve(noAmigos);
+            }
+        });
+    });
+}
+
+function getAllFriends() {
+    return new Promise((resolve, reject) => {
+        conn.query('SELECT * FROM Amigo', (async (err, result) => {
+            if (err) {
+                console.log("error en la consulta a la db en consultar amigos")
+                reject(err);
+            } else {
+                //console.log("amigos consultas bien", result)
+                let amigos = [];
+                let mis_amigos = [];
+                for (let amigo of result) {
+                    amigos.push({
+                        usuario_id1: amigo.id_usuario1,
+                        usuario_id2: amigo.id_usuario2,
+                        estado: amigo.estado,
+                    })
+                    mis_amigos.push(amigo.id_usuario2)
+                }
+                resolve(mis_amigos);
+            }
+        }));
+    });
+}
+
+
 module.exports = { 
     getIdUsuario,
     getPasswordUsuario,
@@ -228,5 +355,8 @@ module.exports = {
     getIdLabelByName,
     createLabel,
     insertLabelPublicacion,
-    createComentario
+    createComentario,
+    agregarAmigo,
+    aceptarAmigo,
+    getFriends
 };

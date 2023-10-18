@@ -39,3 +39,12 @@ CREATE TABLE Etiquetas_publicaciones (
     FOREIGN KEY (id_etiqueta) REFERENCES Etiquetas(id_etiqueta),
     FOREIGN KEY (id_publicacion) REFERENCES Publicaciones(id_publicacion)
 );
+
+CREATE TABLE amigos (
+    usuario_id1 INT,
+    usuario_id2 INT,
+    PRIMARY KEY (usuario_id1, usuario_id2),
+    CHECK (usuario_id1 <> usuario_id2),
+    FOREIGN KEY (usuario_id1) REFERENCES Usuarios(id_usuario),
+    FOREIGN KEY (usuario_id2) REFERENCES Usuarios(id_usuario)
+);

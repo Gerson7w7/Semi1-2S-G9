@@ -41,3 +41,5 @@ router.post('/editar-perfil', async (req, res) => {
         res.status(400).json({passwordCorrecta: false, mensaje: "La contraseña es incorrecta."})
     }
 });
+
+module.exports = router;
