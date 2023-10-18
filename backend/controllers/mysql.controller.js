@@ -196,6 +196,19 @@ function insertLabelPublicacion(id_label, id_publicacion) {
     }));
 }
 
+function getLabels() {
+    return new Promise((resolve, reject) => {
+        conn.query('SELECT nombre FROM Etiquetas ORDER BY repeticiones DESC LIMIT 10', ((err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                stringArray = result.map(label => label.nombre);
+                resolve({ labels: stringArray });
+            }
+        }));
+    });
+}
+
 //=================================== Comentario ============================================
 function createComentario(comentario, id_publicacion, id_usuario) {
     return new Promise((resolve, reject) => {
@@ -355,6 +368,7 @@ module.exports = {
     getIdLabelByName,
     createLabel,
     insertLabelPublicacion,
+    getLabels,
     createComentario,
     agregarAmigo,
     aceptarAmigo,
