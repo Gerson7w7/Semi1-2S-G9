@@ -123,10 +123,9 @@ function createPublicacion(descripcion, id_usuario) {
     });
 }
 
-function getPublicaciones(id_usuario) {
-    id_usuario = `%${id_usuario}%`;
+function getPublicaciones(id_usuario) {;
     return new Promise((resolve, reject) => {
-        conn.query('SELECT * FROM Publicaciones WHERE id_usuario LIKE ?', [id_usuario], (async (err, result) => {
+        conn.query('SELECT * FROM Publicaciones', (async (err, result) => {
             if (err) {
                 console.log("error en la consulta a la db en consultar publicaciones")
                 reject(err);
