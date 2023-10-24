@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { createPublicacion, getPublicaciones, getIdLabelByName,
+const { createPublicacion, getPublicaciones, getPublicacionesByLabel, getIdLabelByName,
         createLabel, insertLabelPublicacion, getLabels, createComentario } = require('../controllers/mysql.controller');
 const { detectLabels } = require('../controllers/rekognition.controller');
 const { guardarImagen } = require('../controllers/s3.controller');
@@ -40,7 +40,7 @@ router.get('/get-publicaciones', async (req, res) =>{
         console.log("id de usuario ", id_usuario)
         const labels = await getLabels();
         const result = await getPublicaciones(id_usuario);
-        if (result) {
+        if (result.status) {
             return res.status(200).json({ ok: true, etiquetas: labels.labels, publicaciones: result.publicaciones });
         }
         console.log('Error al consultar publicación.');
@@ -69,11 +69,17 @@ router.post('/add-comentario', async (req, res) =>{
 
 router.post('/filtrar-publicaciones', async (req, res) => {
     try {
-        const { etiqueta, id_usuario } = req.body;
-        /*const result = await createComentario(comentario, id_publicacion, id_usuario);
-        if (result) {
-            return res.status(200).json({ ok: true, id_comentario: result.id_comentario });
-        }*/
+        const { id_usuario, etiqueta } = req.body;
+        const labels = await getLabels();
+        result = null;
+        if (etiqueta == 'Todos') {
+            result = await getPublicaciones(id_usuario);
+        } else {
+            result = await getPublicacionesByLabel(id_usuario, etiqueta);
+        }
+        if (result.status) {
+            return res.status(200).json({ ok: true, etiquetas: labels.labels, publicaciones: result.publicaciones });
+        }
         console.log('Error al filtrar publicaciones.');
         res.status(400).json({ok : false, mensaje : "Error al filtrar publicaciones."});
     } catch (error) {
