@@ -9,16 +9,7 @@ router.get('/agg-sl-friends', async (req, res) =>{
         const result = await getFriends(id_usuario);
         if (result) {
             console.log("el result de amigos: ", result)
-            mis_friends = []
-            solicitud_friends = []
-            result.amigos.forEach(element => {
-                if (element.estado == "aceptado") {
-                    mis_friends.push(element)
-                }else{
-                    solicitud_friends.push(element)
-                }
-            });
-            return res.status(200).json({ ok: true, mis_friends, solicitud_friends, not_amigos: result.not_amigos});
+            return res.status(200).json({ ok: true, mis_friends: result.mis_friends, solicitud_friends: result.solicitud_friends, not_amigos: result.not_amigos});
         }
         console.log('Error al consultar amigos.');
         res.status(400).json({ok : false, mensaje : "Error al consultar amigos."})
