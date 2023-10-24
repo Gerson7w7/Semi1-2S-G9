@@ -126,7 +126,7 @@ const FiltrarPublicacion = () => {
             nombre={p.nombre}
             fecha={p.fecha}
             imagen={p.imagen}
-            descripcion={p.descripcion}
+            contenido={p.descripcion}
             comentarios={p.comentarios}
           />
         ))}

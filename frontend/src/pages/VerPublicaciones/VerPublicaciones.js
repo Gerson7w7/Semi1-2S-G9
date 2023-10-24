@@ -5,25 +5,7 @@ import Publicacion from "../../components/Publicacion/Publicacion";
 import imagen from "../../components/Publicacion/cr7.jpg";
 
 const VerPublicaciones = () => {
-  const [publicaciones, setPublicaciones] = useState([
- /*   {
-      id_publicacion : 10,
-      nombre: "Sebastian de Leon ",
-      fecha: "10-10-2023",
-      imagen,
-      descripcion: "esta es \n descripcion",
-      comentarios: [{nombre: "Usuario1", contenido: "¡Gran publicación!" }]
-    },
-    {
-        id_publicacion : 4,
-        nombre: "Sebastian de Leon ",
-        fecha: "10-10-2023",
-        imagen,
-        descripcion: "esta es \n descripcion",
-        comentarios: [{nombre: "Usuario2", contenido: "siuu" }]
-      }*/
-    
-  ]);
+  const [publicaciones, setPublicaciones] = useState([]);
   const ip = "http://localhost:5000";
 
   useEffect(() => {
@@ -64,7 +46,7 @@ const VerPublicaciones = () => {
             nombre={p.nombre}
             fecha={p.fecha}
             imagen={p.imagen}
-            descripcion={p.descripcion}
+            contenido={p.descripcion}
             comentarios={p.comentarios}
           />
         ))}
