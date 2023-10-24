@@ -135,7 +135,8 @@ function getPublicaciones(id_usuario) {;
                 for (let publicacion of result) {
                     const consultar_comentarios = await getComentarios(publicacion.id_publicacion)
                     publicaciones.push({
-                        id: publicacion.id_publicacion,
+                        id_publicacion: publicacion.id_publicacion,
+                        nombre : await getNombreUsuario(publicacion.id_usuario),
                         descripcion: publicacion.descripcion,
                         fecha: publicacion.fecha,
                         imagen: `${process.env.PREFIJO_BUCKET}Fotos/publicaciones/${publicacion.id_publicacion}.jpg`,
@@ -237,7 +238,8 @@ function getComentarios(id_publicacion) {
                         id: comentario.id_comentario,
                         comentario: comentario.comentario,
                         fecha: comentario.fecha,
-                        usuario: comentario.id_usuario
+                        usuario: comentario.id_usuario,
+                        nombre : await getNombreUsuario(comentario.id_usuario),
                     })
                 }
                 resolve({ status: true, 'comentarios': comentarios });
