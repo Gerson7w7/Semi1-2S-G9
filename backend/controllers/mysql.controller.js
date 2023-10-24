@@ -159,7 +159,7 @@ function getPublicacionesByLabel(id_usuario, label) {
                 reject(err);
             } else {
                 let publicaciones = [];
-                for (let publicacion of result) {
+                for (const publicacion of result) {
                     const consultar_comentarios = await getComentarios(publicacion.id_publicacion)
                     publicaciones.push({
                         id: publicacion.id_publicacion,
@@ -208,16 +208,17 @@ function createLabel(name) {
 }
 
 function insertLabelPublicacion(id_label, id_publicacion) {
-    conn.query('INSERT INTO Etiquetas_publicaciones (id_label, id_publicacion) VALUES (?, ?)',
+    console.log("insertando etiqueta", id_label, " - ", id_publicacion)
+    conn.query('INSERT INTO Etiquetas_publicaciones (id_etiqueta, id_publicacion) VALUES (?, ?)',
         [id_label, id_publicacion], ((err) => {
             if (err) {
-                reject(err);
+                console.log(err);
             }
     }));
     conn.query('UPDATE Etiquetas SET repeticiones = repeticiones + 1 WHERE id_etiqueta = ?',
         id_label, ((err) => {
             if (err) {
-                reject(err);
+                console.log(err);
             }
     }));
 }
@@ -251,9 +252,8 @@ function createComentario(comentario, id_publicacion, id_usuario) {
 }
 
 function getComentarios(id_publicacion) {
-    id_publicacion = `%${id_publicacion}%`;
     return new Promise((resolve, reject) => {
-        conn.query('SELECT * FROM Comentario WHERE id_publicacion LIKE ?', [id_publicacion], (async (err, result) => {
+        conn.query('SELECT * FROM Comentario WHERE id_publicacion = ?', id_publicacion, (async (err, result) => {
             if (err) {
                 console.log("error en la consulta a la db en consultar comentarios")
                 reject(err);

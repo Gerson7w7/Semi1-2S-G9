@@ -5,55 +5,51 @@ import "../Publicacion/Publicacion.css";
 const Publicacion = (props) => {
   const { id_publicacion, nombre, fecha, imagen, descripcion, comentarios } = props;
   const [mostrarComentarios, setMostrarComentarios] = useState(false);
-  const [nuevoComentario, setNuevoComentario] = useState({ id_publicacion, nombre, contenido: "" });
+  const [nuevoComentario, setNuevoComentario] = useState({ id_publicacion, nombre, comentario: "" });
   const [comentarios2, setComentarios] = useState(comentarios);
-
-     
 
   const toggleComentarios = () => {
     setMostrarComentarios(!mostrarComentarios);
   };
 
   const handleNuevoComentarioChange = (event) => {
-    setNuevoComentario({ ...nuevoComentario, contenido: event.target.value });
+    setNuevoComentario({ ...nuevoComentario, comentario: event.target.value });
   };
 
   const ip = "http://localhost:5000";
   let data = {
-    comentario: nuevoComentario.contenido,
+    comentario: nuevoComentario.comentario,
     id_publicacion,
     nombre
 
   }
 
   const enviarComentario = async () => {
-    if (nuevoComentario.contenido.trim() !== "") {
-      try {
-        console.log(data)
-        const token = localStorage.getItem("jwt");
-        const response = await fetch(`${ip}/add-comentario`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(data),
-        });
+    if (nuevoComentario.comentario.trim() !== "") {
+      console.log(data)
+      const token = localStorage.getItem("jwt");
+      const response = await fetch(`${ip}/add-comentario`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          const nuevoComentario = {
-            nombre,
-            contenido: nuevoComentario.contenido,
-          };
-          setComentarios([...comentarios, nuevoComentario]);
-          setNuevoComentario({ nombre: "", contenido: "" });
-        } else {
-          
-          alert("Error al enviar el comentario");
-        }
-      } catch (error) {
-        alert("Error al realizar la solicitud:", error);
+      console.log("response: ",response.ok);
+      if (response.ok) {
+        const nuevoComentario2 = {
+          nombre,
+          comentario: nuevoComentario.comentario,
+        };
+        console.log("nuevoComentario2: ",nuevoComentario2);
+        
+        setComentarios([...comentarios, nuevoComentario2]);
+        setNuevoComentario({ nombre: "", comentario: "" });
+      } else {
+        console.log("error");
+        alert("Error al enviar el comentario");
       }
     }
   };
@@ -91,13 +87,13 @@ const Publicacion = (props) => {
               <ul className="comentarios-list">
                 {comentarios2.map((comentario, index) => (
                   <li key={index}>
-                    <strong>{comentario.nombre}:</strong> {comentario.contenido}
+                    <strong>{comentario.nombre}:</strong> {comentario.comentario}
                   </li>
                 ))}
               </ul>
               <textarea
                 placeholder="Escribe tu comentario..."
-                value={nuevoComentario.contenido}
+                value={nuevoComentario.comentario}
                 onChange={handleNuevoComentarioChange}
                 className="nuevo-comentario-input"
               />

@@ -13,7 +13,7 @@ const FiltrarPublicacion = () => {
   const ip = "http://localhost:5000";
 
   useEffect(() => {
-    const url = `${ip}/get-etiquetas`;
+    const url = `${ip}/get-publicaciones`;
     const token = localStorage.getItem("jwt");
 
     const fetchData = async () => {
@@ -122,14 +122,14 @@ const FiltrarPublicacion = () => {
         </div>
         {publicaciones.map((p) => (
           <Publicacion
-            usuario={p.usuario}
+            id_publicacion={p.id_publicacion}
+            nombre={p.nombre}
             fecha={p.fecha}
             imagen={p.imagen}
             descripcion={p.descripcion}
             comentarios={p.comentarios}
           />
         ))}
-        { <Publicacion /> }
       </div>
     </main>
   );

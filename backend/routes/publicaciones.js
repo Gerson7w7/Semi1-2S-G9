@@ -12,11 +12,11 @@ router.post('/crear-publicacion', async (req, res) => {
             const labels = await detectLabels(imagen);
             if (labels.length > 0) {
                 for (let label of labels) {
-                    const existente = await getIdLabelByName(label);
+                    const existente = await getIdLabelByName(label.Name);
                     if (existente.status) {
                         insertLabelPublicacion(existente.id_label, result.id_publicacion);
                     } else {
-                        const newLabel = await createLabel(label);
+                        const newLabel = await createLabel(label.Name);
                         if (newLabel.status) {
                             insertLabelPublicacion(newLabel.id_label, result.id_publicacion);
                         }
