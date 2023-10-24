@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../Publicacion/Publicacion.css";
 
 
@@ -6,7 +6,11 @@ const Publicacion = (props) => {
   const { id_publicacion, nombre, fecha, imagen, descripcion, comentarios } = props;
   const [mostrarComentarios, setMostrarComentarios] = useState(false);
   const [nuevoComentario, setNuevoComentario] = useState({ id_publicacion, nombre, comentario: "" });
-  const [comentarios2, setComentarios] = useState(comentarios);
+  const [comentarios2, setComentarios] = useState([]);
+
+  useEffect(() => {
+    setComentarios(comentarios);
+  }, [comentarios]);
 
   const toggleComentarios = () => {
     setMostrarComentarios(!mostrarComentarios);
@@ -43,8 +47,6 @@ const Publicacion = (props) => {
           nombre,
           comentario: nuevoComentario.comentario,
         };
-        console.log("nuevoComentario2: ",nuevoComentario2);
-        
         setComentarios([...comentarios, nuevoComentario2]);
         setNuevoComentario({ nombre: "", comentario: "" });
       } else {

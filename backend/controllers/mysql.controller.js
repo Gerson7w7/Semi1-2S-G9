@@ -91,7 +91,7 @@ function getPerfil(id_usuario) {
 function editarPerfil(id_usuario, nombre, dpi, correo) {
     return new Promise((resolve, reject) => {
         conn.query(`UPDATE Usuarios
-                    SET nombre = CASE WHEN LENGTH(?) > 0 THEN ? ELSE nombres END,
+                    SET nombre = CASE WHEN LENGTH(?) > 0 THEN ? ELSE nombre END,
                     dpi = CASE WHEN LENGTH(?) > 0 THEN ? ELSE dpi END,
                     correo = CASE WHEN LENGTH(?) > 0 THEN ? ELSE correo END
                     WHERE id_usuario = ?`,
@@ -165,6 +165,7 @@ function getPublicacionesByLabel(id_usuario, label) {
                         id: publicacion.id_publicacion,
                         descripcion: publicacion.descripcion,
                         fecha: publicacion.fecha,
+                        nombre : await getNombreUsuario(publicacion.id_usuario),
                         imagen: `${process.env.PREFIJO_BUCKET}Fotos/publicaciones/${publicacion.id_publicacion}.jpg`,
                         comentarios: consultar_comentarios.comentarios
                     })
@@ -323,7 +324,7 @@ async function getFriends(id_usuario) {
                     amigos.push({
                         id: real_id,
                         estado: amigo.estado,
-                        Nombre: await getNombreUsuario(real_id),
+                        nombre: await getNombreUsuario(real_id),
                         imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${real_id}.jpg`
                     })
                     mis_amigos.push(real_id)
@@ -350,7 +351,7 @@ function getNoFriends(idUsuariosAmigos) {
                 for (let amigo of results) {
                     noAmigos.push({
                         id: amigo.id_usuario,
-                        Nombre: amigo.nombre,
+                        nombre: amigo.nombre,
                         imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${amigo.id_usuario}.jpg`
                     })
                 }

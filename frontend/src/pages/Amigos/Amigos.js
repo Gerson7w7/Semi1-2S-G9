@@ -3,38 +3,10 @@ import Navegacion from "../../components/Navegacion/Navegacion";
 import "./Amigos.css";
 
 const Amigos = () => {
-  const [agregarFriendsData, setAgregarFriendsData] = useState([
-    /*{
-    id_friend: 10,
-    nombre: "Jorge "
-    },
-    {
-        id_friend: 5,
-        nombre: "Larry "
-    }*/
-
-    ]);
-  const [solicitudFriendsData, setSolicitudFriendsData] = useState([
-    /*{
-        id_friend: 106,
-        nombre: "Jorge 2"
-    },
-    {
-        id_friend: 8,
-        nombre: "Larry 3"
-    }*/
-    ]);
+  const [agregarFriendsData, setAgregarFriendsData] = useState([]);
+  const [solicitudFriendsData, setSolicitudFriendsData] = useState([]);
   
-  const [MisFriendsData, setMisFriendsData] = useState([
-        /*{
-            id_friend: 106,
-            nombre: "Jorge 2"
-        },
-        {
-            id_friend: 8,
-            nombre: "Larry 3"
-        }*/
-        ]);
+  const [MisFriendsData, setMisFriendsData] = useState([]);
   const ip = "http://localhost:5000";
   const token = localStorage.getItem("jwt");
 
@@ -52,9 +24,9 @@ const Amigos = () => {
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
-
         const data = await response.json();
-        setAgregarFriendsData(data.agregar_friends);
+        console.log("response: ", data);
+        setAgregarFriendsData(data.not_amigos);
         setSolicitudFriendsData(data.solicitud_friends);
         setMisFriendsData(data.mis_friends);
       } catch (error) {
@@ -85,7 +57,7 @@ const Amigos = () => {
       const result = await response.json();
 
       if (result.ok) {
-        alert(`Haz enviado una solicitud de amistad a: ${friendNombre}}`);
+        alert(`Haz enviado una solicitud de amistad a: ${friendNombre}`);
         window.location.reload();
       } else {
         alert("Error en el servidor, no se pudo agregar amigo");
@@ -143,7 +115,7 @@ const Amigos = () => {
                 <tr key={friend.id_friend}>
                   <td>
                     {friend.nombre}{' '}
-                    <button onClick={() => handleAddFriend(friend.id_friend, friend.nombre)}>
+                    <button onClick={() => handleAddFriend(friend.id, friend.nombre)}>
                       Enviar solicitud
                     </button>
                   </td>

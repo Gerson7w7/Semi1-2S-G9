@@ -54,7 +54,7 @@ const FiltrarPublicacion = () => {
         .then((res) => res.json())
         .catch((error) => console.error("Error:", error))
         .then((res) => {
-          console.log("res: ", res);
+          console.log("res filtrar: ", res);
           setEtiquetas(res.etiquetas);
           setPublicaciones(res.publicaciones);
         });
@@ -122,7 +122,7 @@ const FiltrarPublicacion = () => {
         </div>
         {publicaciones.map((p) => (
           <Publicacion
-            id_publicacion={p.id_publicacion}
+            id_publicacion={p.id}
             nombre={p.nombre}
             fecha={p.fecha}
             imagen={p.imagen}

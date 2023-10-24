@@ -31,10 +31,11 @@ function Perfil() {
       .then((res) => res.json())
       .then((res) => {
         console.log("res: ", res);
-        setNombre(res.nombre);
-        setDpi(res.dpi);
-        setEmail(res.email);
-        setFotoPerfil(res.imagen);
+        setNombre(res.result.nombre);
+        setDpi(res.result.dpi);
+        setEmail(res.result.email);
+        setFotoPerfil(res.result.imagen);
+        
       })
       .catch((error) => console.error("Error:", error));
   }, []);
@@ -68,6 +69,7 @@ function Perfil() {
   const editarPerfil = async () => {
     const url = `${ip}/editar-perfil`;
     let base64Image = "";
+    const token = localStorage.getItem("jwt");
     if (fotoPerfilNuevo !== "") {
       base64Image = fotoPerfilNuevo.split(",")[1];
     }
@@ -85,6 +87,7 @@ function Perfil() {
       body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => res.json())
