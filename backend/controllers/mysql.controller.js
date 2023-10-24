@@ -123,7 +123,7 @@ function createPublicacion(descripcion, id_usuario) {
     });
 }
 
-function getPublicaciones(id_usuario) {;
+function getPublicaciones(id_usuario) {
     return new Promise((resolve, reject) => {
         conn.query('SELECT * FROM Publicaciones', (async (err, result) => {
             if (err) {
@@ -137,6 +137,32 @@ function getPublicaciones(id_usuario) {;
                     publicaciones.push({
                         id_publicacion: publicacion.id_publicacion,
                         nombre : await getNombreUsuario(publicacion.id_usuario),
+                        descripcion: publicacion.descripcion,
+                        fecha: publicacion.fecha,
+                        imagen: `${process.env.PREFIJO_BUCKET}Fotos/publicaciones/${publicacion.id_publicacion}.jpg`,
+                        comentarios: consultar_comentarios.comentarios
+                    })
+                }
+                resolve({ status: true, 'publicaciones': publicaciones });
+            }
+        }));
+    });
+}
+
+function getPublicacionesByLabel(id_usuario, label) {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM Publicaciones p
+                    RIGHT JOIN Etiquetas_publicaciones ep ON ep.id_publicacion = p.id_publicacion
+                    LEFT JOIN Etiquetas e ON e.id_etiqueta = ep.id_etiqueta
+                    WHERE e.nombre = ?`, label, (async (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                let publicaciones = [];
+                for (let publicacion of result) {
+                    const consultar_comentarios = await getComentarios(publicacion.id_publicacion)
+                    publicaciones.push({
+                        id: publicacion.id_publicacion,
                         descripcion: publicacion.descripcion,
                         fecha: publicacion.fecha,
                         imagen: `${process.env.PREFIJO_BUCKET}Fotos/publicaciones/${publicacion.id_publicacion}.jpg`,
@@ -203,6 +229,7 @@ function getLabels() {
                 reject(err);
             } else {
                 stringArray = result.map(label => label.nombre);
+                stringArray.unshift("Todos");
                 resolve({ labels: stringArray });
             }
         }));
@@ -366,6 +393,7 @@ module.exports = {
     registrarUsuario,
     createPublicacion,
     getPublicaciones,
+    getPublicacionesByLabel,
     getIdLabelByName,
     createLabel,
     insertLabelPublicacion,
