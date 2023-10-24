@@ -159,7 +159,7 @@ const Amigos = () => {
                   <td>
                     <img
                       src={friend.imagen}
-                      alt={friend.nombre}
+                      alt=".."
                       className="avatar"
                     />{" "}
                     {friend.nombre}{" "}
@@ -189,8 +189,8 @@ const Amigos = () => {
                 <tr key={friend.id_friend}>
                   <td>
                     <img
-                      src={friend.imagenUrl}
-                      alt={friend.nombre}
+                      src={friend.imagen}
+                      alt=".."
                       className="avatar"
                     />{" "}
                     {friend.nombre}{" "}

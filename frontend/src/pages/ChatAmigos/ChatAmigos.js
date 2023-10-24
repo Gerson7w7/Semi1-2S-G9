@@ -12,12 +12,12 @@ const ChatAmigos = () => {
   const ip = "http://localhost:5000";
 
   useEffect(() => {
-    const url = `${ip}/get-amigos`;
+    const url = `${ip}/agg-sl-friends`;
     const token = localStorage.getItem("jwt");
 
     const fetchData = async () => {
       fetch(url, {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -27,7 +27,7 @@ const ChatAmigos = () => {
         .catch((error) => console.error("Error:", error))
         .then((res) => {
           console.log("res: ", res);
-          setAmigos(res.amigos);
+          setAmigos(res.mis_friends);
           setUser1({ id: res.userid, nombre: res.nombre });
         });
     };
@@ -66,7 +66,7 @@ const ChatAmigos = () => {
                   <button
                     type="button"
                     class="btn btn-info"
-                    onClick={() => chatear(a.id_usuario, a.nombre)}
+                    onClick={() => chatear(a.id, a.nombre)}
                   >
                     Enviar mensaje
                   </button>
