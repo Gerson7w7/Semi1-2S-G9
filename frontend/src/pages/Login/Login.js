@@ -22,7 +22,7 @@ const Login = () => {
   const [showError, setShowError] = useState(false);
   const [open, setOpen] = useState(false);
   const webcamRef = React.useRef(null);
-  const ip = "http://backend:5000";
+  const ip = "http://localhost:5000";
 
   const inicioSesion = (event) => {
     event.preventDefault();
