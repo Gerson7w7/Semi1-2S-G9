@@ -7,6 +7,7 @@ const index = require('./routes/index');
 const publicaciones = require('./routes/publicaciones');
 const perfil = require('./routes/perfil');
 const amigos = require('./routes/amigos');
+const chatbot = require('./routes/chatbot');
 const { verifyToken } = require('./controllers/auth.controller');
 
 const app = express();
@@ -23,6 +24,7 @@ app.use('/', index);
 app.use('/', verifyToken, publicaciones);
 app.use('/', verifyToken, perfil);
 app.use('/', verifyToken, amigos);
+app.use('/', chatbot);
 
 app.listen(app.get('port'), () => {
     console.log(`Servidor corriendo en el puerto ${app.get('port')}`);

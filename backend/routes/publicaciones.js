@@ -3,6 +3,7 @@ const { createPublicacion, getPublicaciones, getPublicacionesByLabel, getIdLabel
         createLabel, insertLabelPublicacion, getLabels, createComentario } = require('../controllers/mysql.controller');
 const { detectLabels } = require('../controllers/rekognition.controller');
 const { guardarImagen } = require('../controllers/s3.controller');
+const { translateText } = require('../controllers/translate.controller');
 
 router.post('/crear-publicacion', async (req, res) => {
     try {
@@ -85,6 +86,34 @@ router.post('/filtrar-publicaciones', async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(400).json({ok : false, mensaje : "Error al filtrar publicaciones."});
+    }
+});
+
+router.post('/translate', async(req, res) => {
+    try {
+        const { contenido, idioma } = req.body;
+        let codeLanguage = 'en';
+        switch (idioma) {
+            case 1:
+                codeLanguage = 'es';
+                break;
+            case 2:
+                codeLanguage = 'en';
+                break
+            case 3:
+                codeLanguage = 'pt';
+                break
+            case 4:
+                codeLanguage = 'fr';
+                break
+            default:
+                codeLanguage = 'es';
+        }
+        const result = await translateText(contenido, codeLanguage);
+        res.status(200).json(result);
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ traduccion: req.body.contenido });
     }
 });
 
