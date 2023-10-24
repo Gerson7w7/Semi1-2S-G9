@@ -322,6 +322,7 @@ async function getFriends(id_usuario) {
                 let solicitud_friends = []
                 for (let amigo of result) {
                     real_id = amigo.id_usuario1 === id_usuario ? amigo.usuario_id2 : amigo.usuario_id1
+                    not_real_id = amigo.id_usuario1 !== id_usuario ? amigo.usuario_id1 : amigo.usuario_id2
                     if (amigo.estado == "aceptado"){
                         mis_friends.push({
                             id: real_id,
@@ -333,7 +334,7 @@ async function getFriends(id_usuario) {
                         solicitud_friends.push({
                             id: real_id,
                             estado: amigo.estado,
-                            nombre: await getNombreUsuario(real_id),
+                            nombre: await getNombreUsuario(not_real_id),
                             imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${real_id}.jpg`
                         })
                     }
