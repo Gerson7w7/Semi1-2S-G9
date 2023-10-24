@@ -317,21 +317,31 @@ async function getFriends(id_usuario) {
                 reject(err);
             } else {
                 console.log("amigos consultas coincidencia", result)
-                let amigos = [];
                 let mis_amigos = [];
+                let mis_friends = []
+                let solicitud_friends = []
                 for (let amigo of result) {
                     real_id = amigo.id_usuario1 === id_usuario ? amigo.usuario_id2 : amigo.usuario_id1
-                    amigos.push({
-                        id: real_id,
-                        estado: amigo.estado,
-                        nombre: await getNombreUsuario(real_id),
-                        imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${real_id}.jpg`
-                    })
+                    if (amigo.estado == "aceptado"){
+                        mis_friends.push({
+                            id: real_id,
+                            estado: amigo.estado,
+                            nombre: await getNombreUsuario(real_id),
+                            imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${real_id}.jpg`
+                        })
+                    }else{
+                        solicitud_friends.push({
+                            id: real_id,
+                            estado: amigo.estado,
+                            nombre: await getNombreUsuario(real_id),
+                            imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${real_id}.jpg`
+                        })
+                    }
                     mis_amigos.push(real_id)
                 }
                 mis_amigos.push(id_usuario)
                 not_amigos =  mis_amigos.length !== 0 ? await getNoFriends(mis_amigos) : []
-                resolve({ status: true, 'amigos': amigos, not_amigos });
+                resolve({ status: true, mis_friends, solicitud_friends, not_amigos });
             }
         }));
     });
