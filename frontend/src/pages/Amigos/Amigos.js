@@ -3,9 +3,20 @@ import Navegacion from "../../components/Navegacion/Navegacion";
 import "./Amigos.css";
 
 const Amigos = () => {
-  const [agregarFriendsData, setAgregarFriendsData] = useState([]);
+  const [agregarFriendsData, setAgregarFriendsData] = useState([
+   /* {
+      id_friend: 10,
+      nombre: "Jorge",
+      imagen: "https://www.toyota.com.gt/hubfs/Destacada%20(21).jpg",
+    },
+    {
+      id_friend: 5,
+      nombre: "Larry",
+      imagen: "https://www.toyota.com.gt/hubfs/Destacada%20(21).jpg",
+    },*/
+  ]);
   const [solicitudFriendsData, setSolicitudFriendsData] = useState([]);
-  
+
   const [MisFriendsData, setMisFriendsData] = useState([]);
   const ip = "http://localhost:5000";
   const token = localStorage.getItem("jwt");
@@ -37,9 +48,9 @@ const Amigos = () => {
     fetchData();
   }, []);
 
-  const handleAddFriend = async (friendId,friendNombre) => {
-    console.log("----------AGREGAR-------")
-    console.log(friendId)
+  const handleAddFriend = async (friendId, friendNombre) => {
+    console.log("----------AGREGAR-------");
+    console.log(friendId);
     try {
       const response = await fetch(`${ip}/add-friend`, {
         method: "POST",
@@ -67,9 +78,9 @@ const Amigos = () => {
     }
   };
 
-  const handleSolicitudFriend = async (friendId,friendNombre) => {
-    console.log("----------SOLICITUD-------")
-    console.log(friendId)
+  const handleSolicitudFriend = async (friendId, friendNombre) => {
+    console.log("----------SOLICITUD-------");
+    console.log(friendId);
     try {
       const response = await fetch(`${ip}/accept-solicitud`, {
         method: "POST",
@@ -114,8 +125,17 @@ const Amigos = () => {
               {agregarFriendsData.map((friend) => (
                 <tr key={friend.id_friend}>
                   <td>
-                    {friend.nombre}{' '}
-                    <button onClick={() => handleAddFriend(friend.id, friend.nombre)}>
+                    <img
+                      src={friend.imagen}
+                      alt={friend.nombree}
+                      className="avatar"
+                    />{" "}
+                    {friend.nombre}{" "}
+                    <button
+                      onClick={() =>
+                        handleAddFriend(friend.id_friend, friend.nombre)
+                      }
+                    >
                       Enviar solicitud
                     </button>
                   </td>
@@ -136,13 +156,22 @@ const Amigos = () => {
             <tbody>
               {solicitudFriendsData.map((friend) => (
                 <tr key={friend.id_friend}>
-                <td>
-                  {friend.nombre}{' '}
-                  <button onClick={() => handleSolicitudFriend(friend.id_friend, friend.nombre)}>
-                    Aceptar Solicitud
-                  </button>
-                </td>
-              </tr>
+                  <td>
+                    <img
+                      src={friend.imagen}
+                      alt={friend.nombre}
+                      className="avatar"
+                    />{" "}
+                    {friend.nombre}{" "}
+                    <button
+                      onClick={() =>
+                        handleSolicitudFriend(friend.id_friend, friend.nombre)
+                      }
+                    >
+                      Aceptar Solicitud
+                    </button>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
@@ -158,14 +187,19 @@ const Amigos = () => {
             <tbody>
               {MisFriendsData.map((friend) => (
                 <tr key={friend.id_friend}>
-                <td>
-                  {friend.nombre}{' '}
-                </td>
-              </tr>
+                  <td>
+                    <img
+                      src={friend.imagenUrl}
+                      alt={friend.nombre}
+                      className="avatar"
+                    />{" "}
+                    {friend.nombre}{" "}
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
-          </div>
+        </div>
       </div>
     </main>
   );
