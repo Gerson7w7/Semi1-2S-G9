@@ -31,7 +31,7 @@ const Publicacion = (props) => {
     setNuevoComentario({ ...nuevoComentario, comentario: event.target.value });
   };
 
-  const ip = "http://localhost:5000";
+  const ip = "http://backend:5000";
   let data = {
     comentario: nuevoComentario.comentario,
     id_publicacion,

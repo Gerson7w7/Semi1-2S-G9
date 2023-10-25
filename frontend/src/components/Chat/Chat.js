@@ -1,60 +1,71 @@
-import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./Chat.css";
 
+const URL = "wss://vk7tl0t2b0.execute-api.us-east-1.amazonaws.com/production";
+
 const Chat = (props) => {
-  //   const { user1, user2 } = props;
+  const { user1, user2 } = props;
   const [chat, setChat] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const socket = useRef(null);
+  // const user1 = { id: "1", nombre: "Juan" };
+  // const user2 = { id: "2", nombre: "Duki" };
+  // const chatAux = [
+  //   { userId: "1", text: "Hola" },
+  //   { userId: "2", text: "Hola" },
+  //   { userId: "1", text: "Como estas?" },
+  //   { userId: "2", text: "Bien y tu?" },
+  //   { userId: "1", text: "Bien" },
+  //   { userId: "2", text: "Que haces?" },
+  //   { userId: "1", text: "Nada y tu?" },
+  //   { userId: "2", text: "Nada" },
+  //   { userId: "1", text: "Ok" },
+  //   { userId: "2", text: "Ok" },
+  //   { userId: "1", text: "Adios" },
+  //   { userId: "2", text: "Adios" },
+  // ];
 
-  const socket = io("http://localhost:5000");
+  const onSocketOpen = useCallback(() => {
+    socket.current?.send(JSON.stringify({ action: "setRoom", user1, user2 }));
+  }, [user1, user2]);
 
-  const user1 = { id: "1", nombre: "Juan" };
-  const user2 = { id: "2", nombre: "Duki" };
-  const chatAux = [
-    { userId: "1", text: "Hola" },
-    { userId: "2", text: "Hola" },
-    { userId: "1", text: "Como estas?" },
-    { userId: "2", text: "Bien y tu?" },
-    { userId: "1", text: "Bien" },
-    { userId: "2", text: "Que haces?" },
-    { userId: "1", text: "Nada y tu?" },
-    { userId: "2", text: "Nada" },
-    { userId: "1", text: "Ok" },
-    { userId: "2", text: "Ok" },
-    { userId: "1", text: "Adios" },
-    { userId: "2", text: "Adios" },
-  ];
+  const onSocketMessage = useCallback((dataSTR) => {
+    const data = JSON.parse(dataSTR);
+    setChat(data.historial);
+  }, []);
+
+  const onSocketClose = useCallback(() => {
+    console.log("Desconectado");
+  }, []);
+
+  const onSendMessage = useCallback((message, user2) => {
+    socket.current?.send(JSON.stringify({ action: "sendMessage", message, user2 }));
+  }, []);
+
+  const onConnect = useCallback(() => {
+    if (socket.current?.readyState === socket.OPEN) {
+      socket.current = new WebSocket(URL);
+      socket.current.addEventListener("open", onSocketOpen);
+      socket.current.addEventListener("message", (event) => {
+        onSocketMessage(event.data);
+      });
+      socket.current.addEventListener("close", onSocketClose);
+      console.log("Conectado");
+    }
+  }, []);
 
   useEffect(() => {
-    // Unirse a la sala correspondiente al chat entre user1 y user2
-    socket.emit("joinRoom", { user1Id: user1.id, user2Id: user2.id });
-
-    // Obtener el historial de la conversación desde el servidor
-    socket.on("chatHistory", (history) => {
-      setChat(history);
-    });
-
-    // Escuchar el evento 'message' del servidor
-    socket.on("message", (message) => {
-      setChat((prevChat) => [...prevChat, message]);
-    });
-
-    // Limpiar la conexión cuando el componente se desmonta
+    onConnect();
     return () => {
-      socket.disconnect();
+      if (socket.current?.readyState === socket.OPEN) {
+        socket.current.close();
+      }
     };
-  }, [user1.id, user2.id]); // Dependencias actualizadas
+  }, [onConnect]); // Dependencias actualizadas
 
   const sendMessage = () => {
-    // Enviar el mensaje al servidor
-    let data = {
-      id_usuario1: user1.id,
-      id_usuario2: user2.id,
-      text: newMessage,
-    };
-    console.log("data: ", data);
-    socket.emit("message", data);
+    // Enviar el mensaje al servidor;
+    onSendMessage(newMessage, user2)
     // Limpiar el área de texto
     setNewMessage("");
   };
@@ -63,7 +74,7 @@ const Chat = (props) => {
     <main>
       <h5>{user2.nombre}</h5>
       <div className="chat-container">
-        {chatAux.map((message, index) => (
+        {chat.map((message, index) => (
           <div
             key={index}
             className={`message ${
