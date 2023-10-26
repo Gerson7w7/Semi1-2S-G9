@@ -8,7 +8,7 @@ router.get('/agg-sl-friends', async (req, res) =>{
         console.log("id de usuario ", id_usuario)
         const result = await getFriends(id_usuario);
         if (result) {
-            console.log("el result de amigos: ", result)
+            //console.log("el result de amigos: ", result)
             return res.status(200).json({ ok: true, mis_friends: result.mis_friends, solicitud_friends: result.solicitud_friends, not_amigos: result.not_amigos});
         }
         console.log('Error al consultar amigos.');

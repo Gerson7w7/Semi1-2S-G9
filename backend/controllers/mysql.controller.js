@@ -311,6 +311,7 @@ function aceptarAmigo(estado, id_amigo, id_usuario) {
 
 async function getFriends(id_usuario) {
     return new Promise((resolve, reject) => {
+        // Usuario uno, es el usuario que manda la invitación, usuario 2 es el amigo que recibe la invitación
         conn.query('SELECT * FROM Amigo WHERE usuario_id1 = ? OR usuario_id2 = ?', [id_usuario, id_usuario], (async (err, result) => {
             if (err) {
                 console.log("error en la consulta a la db en consultar amigos")
@@ -320,36 +321,58 @@ async function getFriends(id_usuario) {
                 let mis_amigos = [];
                 let mis_friends = []
                 let solicitud_friends = []
+                let ocultar_no_amigos = []
+                ocultar_no_amigos.push(id_usuario)
                 for (let amigo of result) {
-                    real_id = amigo.id_usuario1 === id_usuario ? amigo.usuario_id2 : amigo.usuario_id1
-                    not_real_id = amigo.id_usuario1 !== id_usuario ? amigo.usuario_id1 : amigo.usuario_id2
+                    invitador = amigo.usuario_id1 === id_usuario ? amigo.usuario_id2 : amigo.usuario_id1
+                    invitado = amigo.usuario_id1 === id_usuario ? amigo.usuario_id1 : amigo.usuario_id2
                     if (amigo.estado == "aceptado"){
-                        mis_friends.push({
-                            id: real_id,
-                            estado: amigo.estado,
-                            nombre: await getNombreUsuario(real_id),
-                            imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${real_id}.jpg`
-                        })
+                            
+                    if(id_usuario == amigo.usuario_id1){
+                            mis_friends.push({
+                                id: invitado,
+                                estado: amigo.estado,
+                                nombre: await getNombreUsuario(invitado),
+                                imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${invitado}.jpg`
+                            })
+                        }else{
+                            mis_friends.push({
+                                id: invitador,
+                                estado: amigo.estado,
+                                nombre: await getNombreUsuario(invitador),
+                                imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${invitador}.jpg`
+                            })
+                        }
+                        mis_amigos.push(invitador)
+                        mis_amigos.push(invitado)
+                    
                     }else{
-                        solicitud_friends.push({
-                            id: real_id,
-                            estado: amigo.estado,
-                            nombre: await getNombreUsuario(not_real_id),
-                            imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${real_id}.jpg`
-                        })
+                        console.log("usuario logeado", id_usuario)
+                        console.log("usuario que invitó", amigo.usuario_id1)
+                        if(id_usuario == amigo.usuario_id1){
+                            ocultar_no_amigos.push(amigo.usuario_id2)
+                        }else{
+                            solicitud_friends.push({
+                                id : invitador,
+                                id_amigo: invitado,
+                                estado: amigo.estado,
+                                nombre: await getNombreUsuario(invitador),
+                                imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${invitador}.jpg`
+                            })
+                            ocultar_no_amigos.push(amigo.usuario_id1)
+                        }
+                        
                     }
-                    mis_amigos.push(real_id)
                 }
-                mis_amigos.push(id_usuario)
-                not_amigos =  mis_amigos.length !== 0 ? await getNoFriends(mis_amigos) : []
+                not_amigos =  await getNoFriends(mis_amigos, ocultar_no_amigos)
                 resolve({ status: true, mis_friends, solicitud_friends, not_amigos });
             }
         }));
     });
 }
 
-function getNoFriends(idUsuariosAmigos) {
-    console.log("encontrados  ", idUsuariosAmigos)
+function getNoFriends(idUsuariosAmigos, idUsuariosPendientes = []) {
+    idUsuariosAmigos = idUsuariosAmigos == [] ? idUsuariosPendientes : idUsuariosAmigos.concat(idUsuariosPendientes)
     return new Promise((resolve, reject) => {
         const query = 'SELECT id_usuario, nombre FROM Usuarios WHERE id_usuario NOT IN (?)';
         conn.query(query, [idUsuariosAmigos], (err, results) => {
@@ -384,11 +407,11 @@ function getAllFriends() {
                 let mis_amigos = [];
                 for (let amigo of result) {
                     amigos.push({
-                        usuario_id1: amigo.id_usuario1,
-                        usuario_id2: amigo.id_usuario2,
+                        usuario_id1: amigo.usuario_id1,
+                        usuario_id2: amigo.usuario_id2,
                         estado: amigo.estado,
                     })
-                    mis_amigos.push(amigo.id_usuario2)
+                    mis_amigos.push(amigo.usuario_id2)
                 }
                 resolve(mis_amigos);
             }
