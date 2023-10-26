@@ -364,8 +364,13 @@ async function getFriends(id_usuario) {
                         
                     }
                 }
+                user1 = {
+                    id: id_usuario,
+                    nombre: await getNombreUsuario(id_usuario),
+                    imagen : `${process.env.PREFIJO_BUCKET}Fotos/usuarios/${id_usuario}.jpg`
+                }
                 not_amigos =  await getNoFriends(mis_amigos, ocultar_no_amigos)
-                resolve({ status: true, mis_friends, solicitud_friends, not_amigos });
+                resolve({ status: true, mis_friends, solicitud_friends, not_amigos, user1});
             }
         }));
     });
