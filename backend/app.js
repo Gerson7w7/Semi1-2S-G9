@@ -24,7 +24,7 @@ app.use('/', index);
 app.use('/', verifyToken, publicaciones);
 app.use('/', verifyToken, perfil);
 app.use('/', verifyToken, amigos);
-app.use('/', chatbot);
+app.use('/', verifyToken, chatbot);
 
 app.listen(app.get('port'), () => {
     console.log(`Servidor corriendo en el puerto ${app.get('port')}`);

@@ -1,4 +1,4 @@
-var AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 
 AWS.config.update({
     region: process.env.REGION,
@@ -10,8 +10,8 @@ const lexruntime = new AWS.LexRuntime();
 
 async function sendMessage(id_user, text) {
     const params = {
-        botAlias: process.env.BOT_ALIAS,
         botName: process.env.BOT_NAME,
+        botAlias: process.env.BOT_ALIAS,
         inputText: text,
         userId: 'user' + id_user,
     };
