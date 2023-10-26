@@ -12,7 +12,7 @@ const Comentario = (props) => {
   }, [comentario]);
 
   const handleChange = (event, contenido) => {
-    const url = `${ip}/transalate`;
+    const url = `${ip}/translate`;
     const token = localStorage.getItem("jwt");
     let data = { contenido: contenido, idioma: event.target.value };
     console.log("data: ", data);

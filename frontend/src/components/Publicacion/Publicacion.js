@@ -31,7 +31,7 @@ const Publicacion = (props) => {
     setNuevoComentario({ ...nuevoComentario, comentario: event.target.value });
   };
 
-  const ip = "http://backend:5000";
+  const ip = "http://localhost:5000";
   let data = {
     comentario: nuevoComentario.comentario,
     id_publicacion,
@@ -67,7 +67,7 @@ const Publicacion = (props) => {
   };
 
   const handleChange = (event, contenido) => {
-    const url = `${ip}/transalate`;
+    const url = `${ip}/translate`;
     const token = localStorage.getItem("jwt");
     let data = { contenido: contenido, idioma: event.target.value };
     console.log("data: ", data);

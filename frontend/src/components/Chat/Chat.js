@@ -10,7 +10,7 @@ const Chat = (props) => {
 
   const sendMessage = () => {
     onSendPrivateMessage(newMessage)
-    setChat(oldArray => [...oldArray, {userId: user2.id, text:newMessage}])
+    setChat(oldArray => [...oldArray, {userId: user1.id, text:newMessage}])
     // Limpiar el área de texto
     setNewMessage("");
   };
