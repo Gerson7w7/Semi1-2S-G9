@@ -16,7 +16,7 @@ function Perfil() {
   const [fotoPerfilNuevo, setFotoPerfilNuevo] = useState("");
   const [password, setpassword] = useState("");
   const [modoEdicion, setModoEdicion] = useState(false);
-  const ip = "http://localhost:5000";
+  const ip = `http://${process.env.REACT_APP_API_IP}:5000`;
 
   useEffect(() => {
     const url = `${ip}/perfil`;

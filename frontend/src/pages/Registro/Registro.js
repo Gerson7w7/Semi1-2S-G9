@@ -71,7 +71,7 @@ const handleImagenChange = (e) => {
         }
 
         console.log("Datos registro:", data)
-        fetch('http://localhost:5000/registro', {
+        fetch(`http://${process.env.REACT_APP_API_IP}:5000/registro`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

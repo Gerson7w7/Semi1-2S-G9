@@ -8,7 +8,7 @@ const ChatBot = () => {
     {  bot_o_user: "bot", text: "¡Hola! ¿En qué puedo ayudarte?"},
   ]);
   const [newMessage, setNewMessage] = useState("");
-  const ip = "http://localhost:5000";
+  const ip = `http://${process.env.REACT_APP_API_IP}:5000`;
   const token = localStorage.getItem("jwt");
   const sendMessage = async () => {
     if (newMessage.trim() === "") return;

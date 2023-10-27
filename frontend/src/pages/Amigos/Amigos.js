@@ -18,7 +18,7 @@ const Amigos = () => {
   const [solicitudFriendsData, setSolicitudFriendsData] = useState([]);
 
   const [MisFriendsData, setMisFriendsData] = useState([]);
-  const ip = "http://localhost:5000";
+  const ip = `http://${process.env.REACT_APP_API_IP}:5000`;
   const token = localStorage.getItem("jwt");
 
   useEffect(() => {

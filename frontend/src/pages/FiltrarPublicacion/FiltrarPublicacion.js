@@ -10,7 +10,7 @@ const FiltrarPublicacion = () => {
   const [publicaciones, setPublicaciones] = useState([]);
   const [selecEtiqueta, setSelectEtiqueta] = useState("Todos");
   const [buscarEtiqueta, setBuscarEtiqueta] = useState("");
-  const ip = "http://localhost:5000";
+  const ip = `http://${process.env.REACT_APP_API_IP}:5000`;
 
   useEffect(() => {
     const url = `${ip}/get-publicaciones`;

@@ -13,7 +13,7 @@ const ChatAmigos = () => {
   const [chat, setChat] = useState([]);
   const socket = useRef(null);
 
-  const ip = "http://localhost:5000";
+  const ip = `http://${process.env.REACT_APP_API_IP}:5000`;
 
   const onSocketOpen = useCallback(() => {
     const name = user1.nombre;

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const Comentario = (props) => {
   const { index, comentario, nombre } = props;
   const [comentarioAux, setComentarioAux] = useState("");
-  const ip = "http://localhost:5000";
+  const ip = `http://${process.env.REACT_APP_API_IP}:5000`;
 
   useEffect(() => {
     setComentarioAux(comentario);
