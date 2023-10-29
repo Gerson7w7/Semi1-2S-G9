@@ -1,4 +1,4 @@
-# Manual técnico 
+﻿# Manual técnico 
 
 # Usuarios IAM y Políticas Asociadas
 
@@ -32,3 +32,41 @@
 - **Descripción:** Este usuario funge como administrador general de los recursos de AWS, por lo cual puede acceder a todos los servicios disponibles.
 - **Políticas Asociadas:**
   - `AdministratorAccess`: Esta política otorga acceso completo a todos los servicios y recursos de AWS.
+
+# Arquitectura de SemiSocial
+![Arquitectura](https://github.com/Gerson7w7/Semi1-2S-G9/blob/master/arquitectura.jpeg)
+
+
+## Usuarios y Autenticación:
+
+Se implementó Cognito para la autenticación de usuarios. La información del usuario se almacenó en el pool de usuarios de Cognito.
+
+## Almacenamiento de Imágenes:
+
+Se configuró un bucket de S3 (`semi1proyecto-g9`) para almacenar imágenes. Las imágenes de perfil de usuario y publicaciones se almacenaron en este bucket.
+
+## Servidor y Aplicación Web:
+
+Se utilizaron instancias EC2 para alojar la aplicación web y el servidor. La seguridad en las instancias EC2 se implementó mediante security groups. Docker y docker-compose se utilizaron para la implementación y gestión de contenedores.
+
+## Base de Datos:
+
+Otra instancia EC2 se configuró exclusivamente para la base de datos. Docker y docker-compose se emplearon para implementar y gestionar el contenedor de la base de datos.
+
+## Servicios de AWS:
+
+### Rekognition:
+
+Se utilizó Rekognition para obtener etiquetas de las imágenes publicadas. También se empleó Rekognition para el reconocimiento facial en el proceso de autenticación.
+
+### Translate:
+
+Translate se implementó para traducir el texto de las publicaciones a diferentes idiomas.
+
+## Lambda y API Gateway:
+
+Se implementó una función Lambda y una API Gateway para la funcionalidad de Chat de amigos.
+
+## Seguridad:
+
+Se configuraron permisos y roles adecuados utilizando IAM. Además, se aseguraron los endpoints del servidor backend utilizando JWT para la autenticación.
